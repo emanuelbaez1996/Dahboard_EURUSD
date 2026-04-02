@@ -287,7 +287,7 @@
   </div>
   <div class="live-badge">
     <span class="live-dot"></span>
-    Actualizado 01/04/2026 13:00
+    Actualizado 02/04/2026 13:00
   </div>
 </header>
 
@@ -339,7 +339,7 @@
       <div class="tooltip-panel" id="tip-capital">
         Capital inicial más todas las ganancias y pérdidas acumuladas desde el inicio. Es el patrimonio real de la cuenta en este momento.
       </div>
-      <div class="metric-value" style="color:var(--green)">$25,422</div>
+      <div class="metric-value" style="color:var(--green)">$25,425</div>
       <div class="metric-sub">Inicial: $25,000</div>
     </div>
     <div class="metric-card">
@@ -350,8 +350,8 @@
       <div class="tooltip-panel" id="tip-retorno">
         Rendimiento porcentual desde el inicio. Se calcula sobre el capital inicial del prop firm ($25,000). El monto en dólares se muestra abajo.
       </div>
-      <div class="metric-value" style="color:var(--green)">+1.69%</div>
-      <div class="metric-sub">$+422.44</div>
+      <div class="metric-value" style="color:var(--green)">+1.70%</div>
+      <div class="metric-sub">$+425.17</div>
     </div>
     <div class="metric-card">
       <div class="metric-header">
@@ -361,8 +361,8 @@
       <div class="tooltip-panel" id="tip-winrate">
         Porcentaje de trades que terminaron en ganancia. Con R:R 1:2, el break-even teórico es 33% — cualquier valor sobre eso es rentable. El mínimo aceptable del prop firm es 40%.
       </div>
-      <div class="metric-value" style="color:#00c896">40.0%</div>
-      <div class="metric-sub">8 / 20 trades</div>
+      <div class="metric-value" style="color:#f59e0b">36.0%</div>
+      <div class="metric-sub">9 / 25 trades</div>
     </div>
     <div class="metric-card">
       <div class="metric-header">
@@ -372,7 +372,7 @@
       <div class="tooltip-panel" id="tip-pf">
         Por cada $1 perdido, cuánto se ganó. PF = ganancias brutas / pérdidas brutas. Menos de 1.0 significa que el bot pierde dinero. El mínimo aceptable es 1.30.
       </div>
-      <div class="metric-value" style="color:#00c896">1.44</div>
+      <div class="metric-value" style="color:#00c896">1.4</div>
       <div class="metric-sub">Mínimo: 1.30</div>
     </div>
     <div class="metric-card">
@@ -383,7 +383,7 @@
       <div class="tooltip-panel" id="tip-rr">
         Relación entre el promedio de pips ganados y el promedio de pips perdidos. El target de la estrategia es 2.0 (ganar el doble de lo que se arriesga). Un valor bajo indica que el precio no llega al TP o que el break-even está cortando trades temprano.
       </div>
-      <div class="metric-value" style="color:var(--text)">2.03</div>
+      <div class="metric-value" style="color:var(--text)">2.11</div>
       <div class="metric-sub">Target: 2.00</div>
     </div>
     <div class="metric-card">
@@ -394,7 +394,7 @@
       <div class="tooltip-panel" id="tip-pnl">
         Ganancia o pérdida neta en trades cerrados durante el día de hoy. No incluye posiciones que siguen abiertas. Se usa para calcular el DD diario.
       </div>
-      <div class="metric-value" style="color:var(--green)">$+111.68</div>
+      <div class="metric-value" style="color:var(--green)">$+50.73</div>
       <div class="metric-sub">Sesión actual</div>
     </div>
     <div class="metric-card">
@@ -405,7 +405,7 @@
       <div class="tooltip-panel" id="tip-trades">
         Cantidad de operaciones cerradas desde el inicio. Con menos de 50 trades las métricas son orientativas — se necesitan al menos 50 para que el win rate y el profit factor sean estadísticamente confiables.
       </div>
-      <div class="metric-value" style="color:var(--text)">20</div>
+      <div class="metric-value" style="color:var(--text)">25</div>
       <div class="metric-sub">Desde el inicio</div>
     </div>
     <div class="metric-card">
@@ -416,7 +416,7 @@
       <div class="tooltip-panel" id="tip-pips">
         Promedio de pips por trade cerrado, contando tanto ganadores como perdedores. Un número bajo puede indicar que los TP no se están alcanzando completos o que el break-even está cerrando trades antes de tiempo.
       </div>
-      <div class="metric-value" style="color:var(--text)">19.1</div>
+      <div class="metric-value" style="color:var(--text)">14.7</div>
       <div class="metric-sub">Por trade cerrado</div>
     </div>
   </section>
@@ -441,15 +441,75 @@
           </tr></thead>
           <tbody>
         <tr style="background:">
+            <td>#32</td>
+            <td>2026-04-02 11:48</td>
+            <td class="buy">Buy</td>
+            <td>EURUSDm</td>
+            <td>1.1548900000000002</td>
+            <td>—</td>
+            <td style="color:#00c896">—</td>
+            <td style="color:#00c896">—</td>
+            <td>⏳ Abierto</td>
+        </tr>
+
+        <tr style="background:#00c89618">
+            <td>#31</td>
+            <td>2026-04-02 07:17</td>
+            <td class="buy">Buy</td>
+            <td>EURUSDm</td>
+            <td>1.1516000000000002</td>
+            <td>1.15359</td>
+            <td style="color:#00c896">+199.00</td>
+            <td style="color:#00c896">$+103.48</td>
+            <td>✅ TP</td>
+        </tr>
+
+        <tr style="background:#00c89618">
+            <td>#30</td>
+            <td>2026-04-02 03:17</td>
+            <td class="buy">Buy</td>
+            <td>EURUSDm</td>
+            <td>1.1516700000000002</td>
+            <td>1.15167</td>
+            <td style="color:#ff4d6d">-0.00</td>
+            <td style="color:#00c896">$+0.00</td>
+            <td>✅ TP</td>
+        </tr>
+
+        <tr style="background:#ff4d6d18">
+            <td>#29</td>
+            <td>2026-04-02 03:02</td>
+            <td class="buy">Buy</td>
+            <td>EURUSDm</td>
+            <td>1.1528200000000002</td>
+            <td>1.15223</td>
+            <td style="color:#ff4d6d">-59.00</td>
+            <td style="color:#ff4d6d">$-32.45</td>
+            <td>✅ TP</td>
+        </tr>
+
+        <tr style="background:#ff4d6d18">
+            <td>#28</td>
+            <td>2026-04-02 02:31</td>
+            <td class="buy">Buy</td>
+            <td>EURUSDm</td>
+            <td>1.1532900000000001</td>
+            <td>1.15294</td>
+            <td style="color:#ff4d6d">-35.00</td>
+            <td style="color:#ff4d6d">$-20.30</td>
+            <td>✅ TP</td>
+        </tr>
+
+        <tr style="background:#ff4d6d18">
             <td>#27</td>
             <td>2026-04-01 12:31</td>
             <td class="buy">Buy</td>
             <td>EURUSDm</td>
             <td>1.16084</td>
-            <td>—</td>
-            <td style="color:#00c896">—</td>
-            <td style="color:#00c896">—</td>
-            <td>⏳ Abierto</td>
+            <td>1.15964</td>
+            <td style="color:#ff4d6d">-120.00</td>
+            <td style="color:#ff4d6d">$-48.00</td>
+            <td>✅ TP</td>
         </tr>
 
         <tr style="background:#00c89618">
@@ -618,66 +678,6 @@
             <td style="color:#ff4d6d">-126.00</td>
             <td style="color:#ff4d6d">$-84.42</td>
             <td>✅ TP</td>
-        </tr>
-
-        <tr style="background:#00c89618">
-            <td>#12</td>
-            <td>2026-03-27 05:40</td>
-            <td class="sell">Sell</td>
-            <td>EURUSDm</td>
-            <td>1.1520400000000002</td>
-            <td>1.15095</td>
-            <td style="color:#00c896">+109.00</td>
-            <td style="color:#00c896">$+77.39</td>
-            <td>✅ TP</td>
-        </tr>
-
-        <tr style="background:">
-            <td>#11</td>
-            <td>2026-03-26 20:02</td>
-            <td class="sell">Sell</td>
-            <td>EURUSDm</td>
-            <td>1.1538300000000001</td>
-            <td>—</td>
-            <td style="color:#00c896">—</td>
-            <td style="color:#00c896">—</td>
-            <td>⏳ Abierto</td>
-        </tr>
-
-        <tr style="background:">
-            <td>#10</td>
-            <td>2026-03-26 10:20</td>
-            <td class="sell">Sell</td>
-            <td>EURUSDm</td>
-            <td>1.15416</td>
-            <td>—</td>
-            <td style="color:#00c896">—</td>
-            <td style="color:#00c896">—</td>
-            <td>⏳ Abierto</td>
-        </tr>
-
-        <tr style="background:">
-            <td>#9</td>
-            <td>2026-03-26 09:20</td>
-            <td class="sell">Sell</td>
-            <td>EURUSDm</td>
-            <td>1.1529900000000002</td>
-            <td>—</td>
-            <td style="color:#00c896">—</td>
-            <td style="color:#00c896">—</td>
-            <td>⏳ Abierto</td>
-        </tr>
-
-        <tr style="background:">
-            <td>#8</td>
-            <td>2026-03-25 19:04</td>
-            <td class="buy">Buy</td>
-            <td>EURUSDm</td>
-            <td>1.1560200000000003</td>
-            <td>—</td>
-            <td style="color:#00c896">—</td>
-            <td style="color:#00c896">—</td>
-            <td>⏳ Abierto</td>
         </tr></tbody>
         </table>
       </div>
@@ -692,9 +692,9 @@
           <tbody>
         <tr>
             <td>Sin datos</td>
-            <td>13</td>
-            <td>38.5%</td>
-            <td style="color:#00c896">$+122.44</td>
+            <td>18</td>
+            <td>33.3%</td>
+            <td style="color:#00c896">$+125.17</td>
         </tr>
 
         <tr>
@@ -719,12 +719,12 @@
 
 <footer class="footer">
   <span>Trading Bot v1.3.12 — Prop Firm $25K · DD 4%/8%</span>
-  <span>Generado: 01/04/2026 13:00 ARG</span>
+  <span>Generado: 02/04/2026 13:00 ARG</span>
 </footer>
 
 <script>
-const labels = ["2026-03-21", "2026-03-21", "2026-03-21", "2026-03-21", "2026-03-21", "2026-03-21", "2026-03-21", "2026-03-27", "2026-03-27", "2026-03-27", "2026-03-27", "2026-03-31", "2026-03-31", "2026-03-31", "2026-04-01", "2026-04-01", "2026-04-01", "2026-04-01", "2026-04-01", "2026-04-01"];
-const valores = [25300.0, 25600.0, 25900.0, 25750.0, 25600.0, 25450.0, 25300.0, 25377.39, 25292.97, 25203.93, 25276.78, 25243.92, 25202.76, 25310.76, 25275.4, 25384.88, 25351.26, 25312.46, 25422.44, 25422.44];
+const labels = ["2026-03-21", "2026-03-21", "2026-03-21", "2026-03-21", "2026-03-21", "2026-03-21", "2026-03-21", "2026-03-27", "2026-03-27", "2026-03-27", "2026-03-27", "2026-03-31", "2026-03-31", "2026-03-31", "2026-04-01", "2026-04-01", "2026-04-01", "2026-04-01", "2026-04-01", "2026-04-01", "2026-04-01", "2026-04-02", "2026-04-02", "2026-04-02", "2026-04-02"];
+const valores = [25300.0, 25600.0, 25900.0, 25750.0, 25600.0, 25450.0, 25300.0, 25377.39, 25292.97, 25203.93, 25276.78, 25243.92, 25202.76, 25310.76, 25275.4, 25384.88, 25351.26, 25312.46, 25422.44, 25422.44, 25374.44, 25354.14, 25321.69, 25321.69, 25425.17];
 
 const ctx = document.getElementById('equityChart').getContext('2d');
 
