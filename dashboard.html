@@ -287,7 +287,7 @@
   </div>
   <div class="live-badge">
     <span class="live-dot"></span>
-    Actualizado 08/04/2026 19:13
+    Actualizado 08/04/2026 19:20
   </div>
 </header>
 
@@ -301,13 +301,13 @@
           <span class="dd-label">DD Diario</span>
           <button class="info-btn" onclick="toggleTip('tip-dd-diario')">?</button>
         </div>
-        <span class="dd-value" style="color:#00c896">0.19%</span>
+        <span class="dd-value" style="color:#00c896">0.20%</span>
       </div>
       <div class="tooltip-panel" id="tip-dd-diario">
         Pérdida acumulada en el día de hoy. El bot se apaga automáticamente (kill switch) si llega al 4% — es el límite diario del prop firm. Se resetea cada día a las 00:00.
       </div>
       <div class="dd-bar-bg">
-        <div class="dd-bar-fill" style="width:4.8%;background:#00c896"></div>
+        <div class="dd-bar-fill" style="width:5.0%;background:#00c896"></div>
       </div>
       <div class="dd-limit">Límite prop firm: 4.00%</div>
     </div>
@@ -317,13 +317,13 @@
           <span class="dd-label">DD Máximo Histórico</span>
           <button class="info-btn" onclick="toggleTip('tip-dd-total')">?</button>
         </div>
-        <span class="dd-value" style="color:#f59e0b">3.13%</span>
+        <span class="dd-value" style="color:#f59e0b">3.85%</span>
       </div>
       <div class="tooltip-panel" id="tip-dd-total">
         La peor caída pico→valle que tuvo la equity curve desde el inicio. Mide el peor momento del bot en toda su historia. El límite del prop firm es 8% — si se supera, la cuenta se cierra.
       </div>
       <div class="dd-bar-bg">
-        <div class="dd-bar-fill" style="width:39.1%;background:#f59e0b"></div>
+        <div class="dd-bar-fill" style="width:48.1%;background:#f59e0b"></div>
       </div>
       <div class="dd-limit">Límite prop firm: 8.00%</div>
     </div>
@@ -339,7 +339,7 @@
       <div class="tooltip-panel" id="tip-capital">
         Capital inicial más todas las ganancias y pérdidas acumuladas desde el inicio. Es el patrimonio real de la cuenta en este momento.
       </div>
-      <div class="metric-value" style="color:var(--green)">$25,233</div>
+      <div class="metric-value" style="color:var(--green)">$25,117</div>
       <div class="metric-sub">Inicial: $25,000</div>
     </div>
     <div class="metric-card">
@@ -350,8 +350,8 @@
       <div class="tooltip-panel" id="tip-retorno">
         Rendimiento porcentual desde el inicio. Se calcula sobre el capital inicial del prop firm ($25,000). El monto en dólares se muestra abajo.
       </div>
-      <div class="metric-value" style="color:var(--green)">+0.93%</div>
-      <div class="metric-sub">$+232.98</div>
+      <div class="metric-value" style="color:var(--green)">+0.47%</div>
+      <div class="metric-sub">$+117.26</div>
     </div>
     <div class="metric-card">
       <div class="metric-header">
@@ -361,8 +361,8 @@
       <div class="tooltip-panel" id="tip-winrate">
         Porcentaje de trades que terminaron en ganancia. Con R:R 1:2, el break-even teórico es 33% — cualquier valor sobre eso es rentable. El mínimo aceptable del prop firm es 40%.
       </div>
-      <div class="metric-value" style="color:#f59e0b">31.4%</div>
-      <div class="metric-sub">16 / 51 trades</div>
+      <div class="metric-value" style="color:#f59e0b">33.3%</div>
+      <div class="metric-sub">19 / 57 trades</div>
     </div>
     <div class="metric-card">
       <div class="metric-header">
@@ -372,7 +372,7 @@
       <div class="tooltip-panel" id="tip-pf">
         Por cada $1 perdido, cuánto se ganó. PF = ganancias brutas / pérdidas brutas. Menos de 1.0 significa que el bot pierde dinero. El mínimo aceptable es 1.30.
       </div>
-      <div class="metric-value" style="color:#f59e0b">1.13</div>
+      <div class="metric-value" style="color:#f59e0b">1.05</div>
       <div class="metric-sub">Mínimo: 1.30</div>
     </div>
     <div class="metric-card">
@@ -383,7 +383,7 @@
       <div class="tooltip-panel" id="tip-rr">
         Relación entre el promedio de pips ganados y el promedio de pips perdidos. El target de la estrategia es 2.0 (ganar el doble de lo que se arriesga). Un valor bajo indica que el precio no llega al TP o que el break-even está cortando trades temprano.
       </div>
-      <div class="metric-value" style="color:var(--text)">2.16</div>
+      <div class="metric-value" style="color:var(--text)">2.19</div>
       <div class="metric-sub">Target: 2.00</div>
     </div>
     <div class="metric-card">
@@ -405,7 +405,7 @@
       <div class="tooltip-panel" id="tip-trades">
         Cantidad de operaciones cerradas desde el inicio. Con menos de 50 trades las métricas son orientativas — se necesitan al menos 50 para que el win rate y el profit factor sean estadísticamente confiables.
       </div>
-      <div class="metric-value" style="color:var(--text)">51</div>
+      <div class="metric-value" style="color:var(--text)">57</div>
       <div class="metric-sub">Desde el inicio</div>
     </div>
     <div class="metric-card">
@@ -416,7 +416,7 @@
       <div class="tooltip-panel" id="tip-pips">
         Promedio de pips por trade cerrado, contando tanto ganadores como perdedores. Un número bajo puede indicar que los TP no se están alcanzando completos o que el break-even está cerrando trades antes de tiempo.
       </div>
-      <div class="metric-value" style="color:var(--text)">5.0</div>
+      <div class="metric-value" style="color:var(--text)">9.6</div>
       <div class="metric-sub">Por trade cerrado</div>
     </div>
   </section>
@@ -692,9 +692,9 @@
           <tbody>
         <tr>
             <td>Sin datos</td>
-            <td>44</td>
-            <td>29.5%</td>
-            <td style="color:#ff4d6d">$-67.02</td>
+            <td>50</td>
+            <td>32.0%</td>
+            <td style="color:#ff4d6d">$-182.74</td>
         </tr>
 
         <tr>
@@ -719,12 +719,12 @@
 
 <footer class="footer">
   <span>Trading Bot v1.3.12 — Prop Firm $25K · DD 4%/8%</span>
-  <span>Generado: 08/04/2026 19:13 ARG</span>
+  <span>Generado: 08/04/2026 19:20 ARG</span>
 </footer>
 
 <script>
-const labels = ["2026-03-21", "2026-03-21", "2026-03-21", "2026-03-21", "2026-03-21", "2026-03-21", "2026-03-21", "2026-03-27", "2026-03-27", "2026-03-27", "2026-03-27", "2026-03-31", "2026-03-31", "2026-03-31", "2026-04-01", "2026-04-01", "2026-04-01", "2026-04-01", "2026-04-01", "2026-04-01", "2026-04-01", "2026-04-02", "2026-04-02", "2026-04-02", "2026-04-02", "2026-04-02", "2026-04-03", "2026-04-05", "2026-04-05", "2026-04-05", "2026-04-05", "2026-04-05", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-07", "2026-04-08", "2026-04-08", "2026-04-08", "2026-04-08", "2026-04-08", "2026-04-08", "2026-04-08"];
-const valores = [25300.0, 25600.0, 25900.0, 25750.0, 25600.0, 25450.0, 25300.0, 25377.39, 25292.97, 25203.93, 25276.78, 25243.92, 25202.76, 25310.76, 25275.4, 25384.88, 25351.26, 25312.46, 25422.44, 25422.44, 25374.44, 25354.14, 25321.69, 25321.69, 25425.17, 25390.73, 25402.43, 25493.21, 25491.43, 25486.98, 25527.03, 25446.93, 25359.81, 25273.33, 25217.83, 25295.92, 25266.52, 25193.56, 25167.28, 25145.17, 25118.62, 25090.02, 25170.62, 25282.22, 25282.22, 25282.22, 25238.56, 25342.86, 25302.46, 25274.38, 25232.98];
+const labels = ["2026-03-21", "2026-03-21", "2026-03-21", "2026-03-21", "2026-03-21", "2026-03-21", "2026-03-21", "2026-03-25", "2026-03-26", "2026-03-26", "2026-03-26", "2026-03-27", "2026-03-27", "2026-03-27", "2026-03-27", "2026-03-27", "2026-03-31", "2026-03-31", "2026-03-31", "2026-03-31", "2026-04-01", "2026-04-01", "2026-04-01", "2026-04-01", "2026-04-01", "2026-04-01", "2026-04-01", "2026-04-02", "2026-04-02", "2026-04-02", "2026-04-02", "2026-04-02", "2026-04-03", "2026-04-05", "2026-04-05", "2026-04-05", "2026-04-05", "2026-04-05", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-07", "2026-04-08", "2026-04-08", "2026-04-08", "2026-04-08", "2026-04-08", "2026-04-08", "2026-04-08"];
+const valores = [25300.0, 25600.0, 25900.0, 25750.0, 25600.0, 25450.0, 25300.0, 25283.2, 25084.75, 24918.83, 24997.8, 25075.19, 24990.77, 24901.73, 24974.58, 25064.46, 25161.06, 25128.2, 25087.04, 25195.04, 25159.68, 25269.16, 25235.54, 25196.74, 25306.72, 25306.72, 25258.72, 25238.42, 25205.97, 25205.97, 25309.45, 25275.01, 25286.71, 25377.49, 25375.71, 25371.26, 25411.31, 25331.21, 25244.09, 25157.61, 25102.11, 25180.2, 25150.8, 25077.84, 25051.56, 25029.45, 25002.9, 24974.3, 25054.9, 25166.5, 25166.5, 25166.5, 25122.84, 25227.14, 25186.74, 25158.66, 25117.26];
 
 const ctx = document.getElementById('equityChart').getContext('2d');
 
