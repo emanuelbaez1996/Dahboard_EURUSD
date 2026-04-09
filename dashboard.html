@@ -3,822 +3,408 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Trading Dashboard — EURUSDm</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<title>Trading Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
-  :root {
-    --bg:       #0d0f14;
-    --surface:  #141820;
-    --border:   #1f2535;
-    --text:     #e2e8f0;
-    --muted:    #64748b;
-    --green:    #00c896;
-    --red:      #ff4d6d;
-    --yellow:   #f59e0b;
-    --accent:   #3b82f6;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'IBM Plex Sans', sans-serif;
-    font-size: 14px;
-    min-height: 100vh;
-  }
+:root {
+  --bg:    #0d1117; --surf: #161b22; --brd: #21262d;
+  --text:  #e6edf3; --muted: #8b949e; --dim: #484f58;
+  --green: #3fb950; --red: #f85149; --blue: #58a6ff; --yellow: #e3b341;
+  --fs: 'Segoe UI', system-ui, sans-serif;
+  --fm: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: var(--fs); font-size: 14px; min-height: 100vh; }
 
-  /* ── HEADER ── */
-  .header {
-    border-bottom: 1px solid var(--border);
-    padding: 18px 28px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-  .header-left { display: flex; align-items: center; gap: 14px; }
-  .logo {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--accent);
-    border: 1px solid var(--accent);
-    padding: 4px 10px;
-    border-radius: 3px;
-  }
-  .header-title {
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--text);
-  }
-  .header-sub {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    color: var(--muted);
-  }
-  .live-badge {
-    display: flex; align-items: center; gap: 6px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    color: var(--green);
-    letter-spacing: 1px;
-  }
-  .live-dot {
-    width: 7px; height: 7px; border-radius: 50%;
-    background: var(--green);
-    animation: pulse 2s infinite;
-  }
-  @keyframes pulse {
-    0%,100% { opacity:1; } 50% { opacity:.3; }
-  }
+.db { background: var(--bg); border-radius: 16px; overflow: hidden; border: 1px solid var(--brd); max-width: 1100px; margin: 16px auto; }
 
-  /* ── LAYOUT ── */
-  .main { padding: 24px 28px; max-width: 1400px; margin: 0 auto; }
+/* HEADER */
+.db-hdr { padding: 14px 20px; border-bottom: 1px solid var(--brd); display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.db-hdr-title { flex: 1; min-width: 120px; }
+.db-hdr-title h2 { font-size: 15px; font-weight: 500; margin: 0; }
+.db-hdr-title p { font-size: 11px; color: var(--muted); margin: 2px 0 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 340px; }
+.db-sw { display: flex; gap: 6px; }
+.db-btn { padding: 7px 16px; border-radius: 8px; font-size: 12px; cursor: pointer; font-family: var(--fm); font-weight: 500; border: 1px solid var(--brd); background: var(--bg); color: var(--dim); transition: all .2s; }
+.db-btn:hover { color: var(--text); }
+.db-btn.active { background: #1a2332; border-color: var(--blue); color: var(--blue); }
+.badge-live    { font-size: 11px; color: var(--green);  background: rgba(63,185,80,.12); padding: 5px 12px; border-radius: 20px; border: 1px solid rgba(63,185,80,.25); white-space: nowrap; }
+.badge-staging { font-size: 11px; color: var(--yellow); background: rgba(227,179,65,.12); padding: 5px 12px; border-radius: 20px; border: 1px solid rgba(227,179,65,.25); white-space: nowrap; }
+.db-ts { font-size: 10px; color: var(--dim); font-family: var(--fm); margin-left: auto; }
 
-  /* ── DRAWDOWN BARS ── */
-  .dd-section {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 24px;
-  }
-  @media(max-width:600px) { .dd-section { grid-template-columns: 1fr; } }
-  .dd-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 16px 20px;
-  }
-  .dd-header {
-    display: flex; justify-content: space-between; align-items: baseline;
-    margin-bottom: 10px;
-  }
-  .dd-label {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--muted);
-  }
-  .dd-value {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 20px;
-    font-weight: 600;
-  }
-  .dd-bar-bg {
-    height: 6px;
-    background: var(--border);
-    border-radius: 3px;
-    overflow: hidden;
-  }
-  .dd-bar-fill {
-    height: 100%;
-    border-radius: 3px;
-    transition: width .6s ease;
-  }
-  .dd-limit {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    color: var(--muted);
-    margin-top: 6px;
-    text-align: right;
-  }
+/* BODY GRID */
+.db-body { padding: 16px 20px; }
+@media(min-width:640px) {
+  .db-body { display: grid; grid-template-columns: 1fr 290px; gap: 16px; align-items: start; }
+  .db-full { grid-column: 1/-1; }
+}
 
-  /* ── MÉTRICAS ── */
-  .metrics-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 14px;
-    margin-bottom: 24px;
-  }
-  .metric-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 16px 18px;
-  }
-  .metric-label {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 8px;
-  }
-  .metric-value {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 22px;
-    font-weight: 600;
-    line-height: 1;
-  }
-  .metric-sub {
-    font-size: 11px;
-    color: var(--muted);
-    margin-top: 5px;
-  }
+/* PAIR CARD */
+.db-pc { background: var(--surf); border: 1px solid var(--brd); border-radius: 10px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.db-pc-name { font-size: 14px; font-weight: 500; font-family: var(--fm); }
+.db-pc-ver  { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.db-pc-right { text-align: right; }
+.db-pc-cap { font-size: 13px; font-family: var(--fm); font-weight: 500; }
+.db-pc-ret { font-size: 11px; font-family: var(--fm); margin-top: 2px; }
 
-  /* ── INFO BUTTON & TOOLTIP ── */
-  .metric-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
-  }
-  .metric-header .metric-label { margin-bottom: 0; }
-  .info-btn {
-    width: 16px; height: 16px;
-    border-radius: 50%;
-    border: 1px solid var(--muted);
-    background: transparent;
-    color: var(--muted);
-    font-size: 9px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-    transition: border-color .2s, color .2s;
-    line-height: 1;
-    padding: 0;
-  }
-  .info-btn:hover { border-color: var(--accent); color: var(--accent); }
-  .tooltip-panel {
-    display: none;
-    margin-top: 10px;
-    padding: 10px 12px;
-    background: #0d0f14;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    font-size: 11px;
-    color: #94a3b8;
-    line-height: 1.6;
-    font-family: 'IBM Plex Sans', sans-serif;
-  }
-  .tooltip-panel.visible { display: block; }
-  .dd-label-row {
-    display: flex; align-items: center; gap: 8px;
-  }
+/* KPI GRID */
+.db-kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+.db-kpi { background: var(--surf); border: 1px solid var(--brd); border-radius: 10px; padding: 10px 12px; }
+.db-kpi-lbl { font-size: 10px; color: var(--muted); margin-bottom: 4px; }
+.db-kpi-val { font-size: 20px; font-weight: 500; font-family: var(--fm); line-height: 1; }
+.db-kpi-sub { font-size: 12px; font-family: var(--fm); margin-top: 3px; }
 
-  /* ── CHART ── */
-  .chart-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 20px 22px;
-    margin-bottom: 24px;
-  }
-  .card-title {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 16px;
-  }
-  .chart-wrap { position: relative; height: 260px; }
+/* STAT GRID */
+.db-stat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 12px; }
+.db-stat { background: var(--surf); border: 1px solid var(--brd); border-radius: 10px; padding: 8px 10px; text-align: center; }
+.db-stat-lbl { font-size: 10px; color: var(--muted); margin-bottom: 4px; }
+.db-stat-val { font-size: 17px; font-weight: 500; font-family: var(--fm); }
 
-  /* ── TABLES ── */
-  .tables-grid {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 20px;
-    margin-bottom: 24px;
-  }
-  @media(max-width:900px) { .tables-grid { grid-template-columns: 1fr; } }
-  .table-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 20px 22px;
-    overflow: hidden;
-  }
-  .table-scroll { overflow-x: auto; margin-top: 12px; }
-  table { width: 100%; border-collapse: collapse; }
-  th {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--muted);
-    padding: 8px 10px;
-    text-align: left;
-    border-bottom: 1px solid var(--border);
-    white-space: nowrap;
-  }
-  td {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 12px;
-    padding: 9px 10px;
-    border-bottom: 1px solid var(--border);
-    white-space: nowrap;
-  }
-  tr:last-child td { border-bottom: none; }
-  tr:hover td { background: #ffffff08; }
-  .buy  { color: var(--green); font-weight: 600; }
-  .sell { color: var(--red);   font-weight: 600; }
+/* SECTION LABEL */
+.db-sl { font-size: 10px; color: var(--muted); letter-spacing: .6px; text-transform: uppercase; margin-bottom: 8px; }
 
-  /* ── FOOTER ── */
-  .footer {
-    border-top: 1px solid var(--border);
-    padding: 12px 28px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    color: var(--muted);
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
+/* CARD */
+.db-card { background: var(--surf); border: 1px solid var(--brd); border-radius: 10px; padding: 10px 12px; margin-bottom: 12px; }
+
+/* CHART */
+.db-chart-wrap { position: relative; width: 100%; height: 120px; }
+@media(min-width:640px) { .db-chart-wrap { height: 160px; } }
+
+/* HIGHLIGHTS */
+.db-hl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+.db-hl-pos { background: rgba(63,185,80,.08); border: 1px solid rgba(63,185,80,.25); border-radius: 10px; padding: 9px 12px; }
+.db-hl-neg { background: rgba(248,81,73,.08); border: 1px solid rgba(248,81,73,.25); border-radius: 10px; padding: 9px 12px; }
+.db-hl-lbl { font-size: 10px; color: var(--muted); margin-bottom: 4px; }
+.db-hl-val { font-size: 17px; font-weight: 500; font-family: var(--fm); }
+.db-hl-date { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+/* DRAWDOWN */
+.db-dd-row { margin-bottom: 10px; }
+.db-dd-row:last-child { margin-bottom: 0; }
+.db-dd-lr { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 11px; }
+.db-dd-limit { font-size: 10px; color: var(--dim); margin-top: 4px; text-align: right; }
+.db-bar-bg { background: var(--brd); border-radius: 4px; height: 5px; overflow: hidden; }
+.db-bar-fill { height: 100%; border-radius: 4px; transition: width .4s; }
+
+/* HISTORY BARS */
+.db-hist-row { display: grid; grid-template-columns: 32px 1fr 52px; align-items: center; gap: 8px; margin-bottom: 8px; }
+.db-hist-row:last-child { margin-bottom: 0; }
+.db-hist-lbl { font-size: 10px; color: var(--muted); font-family: var(--fm); }
+.db-hist-bar-wrap { display: flex; align-items: center; gap: 6px; }
+.db-hist-bar-bg { background: var(--brd); border-radius: 3px; height: 6px; flex: 1; overflow: hidden; }
+.db-hist-bar { height: 100%; border-radius: 3px; }
+.db-hist-pct { font-size: 10px; font-family: var(--fm); min-width: 38px; }
+.db-hist-pnl { font-size: 10px; font-family: var(--fm); text-align: right; }
+
+/* SESION TABLE */
+.db-ses { width: 100%; border-collapse: collapse; font-size: 11px; }
+.db-ses th { color: var(--dim); font-weight: 400; padding: 4px 6px; font-size: 10px; border-bottom: 1px solid var(--brd); text-align: left; }
+.db-ses td { padding: 6px 6px; border-bottom: 1px solid var(--brd); }
+.db-ses tr:last-child td { border-bottom: none; }
+
+/* TRADES TABLE */
+.db-th { display: grid; grid-template-columns: 70px 42px 54px 60px 70px 80px; padding: 7px 12px; border-bottom: 1px solid var(--brd); }
+.db-tr { display: grid; grid-template-columns: 70px 42px 54px 60px 70px 80px; padding: 7px 12px; align-items: center; font-size: 11px; }
+.db-tr+.db-tr { border-top: 1px solid var(--brd); }
+.db-tr:hover { background: rgba(255,255,255,.02); }
+.db-th-c { font-size: 10px; color: var(--dim); }
+.t-buy { color: var(--blue); } .t-sell { color: #f0883e; }
+.b-tp { font-size: 9px; padding: 2px 6px; border-radius: 4px; font-family: var(--fm); background: rgba(63,185,80,.15); color: var(--green); }
+.b-sl { font-size: 9px; padding: 2px 6px; border-radius: 4px; font-family: var(--fm); background: rgba(248,81,73,.15); color: var(--red); }
+.b-op { font-size: 9px; padding: 2px 6px; border-radius: 4px; font-family: var(--fm); background: rgba(88,166,255,.15); color: var(--blue); }
+@media(max-width:639px) {
+  .db-th, .db-tr { grid-template-columns: 70px 42px 1fr 70px 80px; }
+  .hm { display: none; }
+}
 </style>
 </head>
 <body>
+<div class="db">
 
-<header class="header">
-  <div class="header-left">
-    <span class="logo">BOT</span>
-    <div>
-      <div class="header-title">EURUSDm — Trend Following</div>
-      <div class="header-sub">EMA 9/21 · ADX>25 · ATR 1.5x · R:R 1:2 · Risk 0.2%</div>
+  <!-- HEADER -->
+  <div class="db-hdr">
+    <div class="db-hdr-title">
+      <h2>Trading Bot</h2>
+      <p id="hdr-sub">Multi-par · Prop Firm · MT5</p>
     </div>
+    <div class="db-sw">
+      <button class="db-btn active" data-pair="eurusd" onclick="switchPair('eurusd')">EURUSDm</button>
+      <button class="db-btn" data-pair="xauusd" onclick="switchPair('xauusd')">XAUUSDm</button>
+    </div>
+    <span id="pair-badge" class="badge-live">● LIVE</span>
+    <span class="db-ts">Actualizado: 08/04/2026 21:04</span>
   </div>
-  <div class="live-badge">
-    <span class="live-dot"></span>
-    Actualizado 08/04/2026 19:29
-  </div>
-</header>
 
-<main class="main">
+  <!-- BODY -->
+  <div class="db-body">
 
-  <!-- DRAWDOWN BARS -->
-  <section class="dd-section">
-    <div class="dd-card">
-      <div class="dd-header">
-        <div class="dd-label-row">
-          <span class="dd-label">DD Diario</span>
-          <button class="info-btn" onclick="toggleTip('tip-dd-diario')">?</button>
+    <!-- LEFT -->
+    <div class="db-left">
+
+      <div class="db-pc">
+        <div>
+          <div id="pairName" class="db-pc-name">—</div>
+          <div id="pairVer"  class="db-pc-ver">—</div>
         </div>
-        <span class="dd-value" style="color:#00c896">0.20%</span>
-      </div>
-      <div class="tooltip-panel" id="tip-dd-diario">
-        Pérdida acumulada en el día de hoy. El bot se apaga automáticamente (kill switch) si llega al 4% — es el límite diario del prop firm. Se resetea cada día a las 00:00.
-      </div>
-      <div class="dd-bar-bg">
-        <div class="dd-bar-fill" style="width:5.0%;background:#00c896"></div>
-      </div>
-      <div class="dd-limit">Límite prop firm: 4.00%</div>
-    </div>
-    <div class="dd-card">
-      <div class="dd-header">
-        <div class="dd-label-row">
-          <span class="dd-label">DD Máximo Histórico</span>
-          <button class="info-btn" onclick="toggleTip('tip-dd-total')">?</button>
+        <div class="db-pc-right">
+          <div id="pairCap" class="db-pc-cap">—</div>
+          <div id="pairRet" class="db-pc-ret">—</div>
         </div>
-        <span class="dd-value" style="color:#00c896">1.74%</span>
       </div>
-      <div class="tooltip-panel" id="tip-dd-total">
-        La peor caída pico→valle que tuvo la equity curve desde el inicio. Mide el peor momento del bot en toda su historia. El límite del prop firm es 8% — si se supera, la cuenta se cierra.
+
+      <div class="db-kpi-grid">
+        <div class="db-kpi">
+          <div id="maLbl" class="db-kpi-lbl">Mes actual</div>
+          <div id="maAmt" class="db-kpi-val">—</div>
+          <div id="maPct" class="db-kpi-sub">—</div>
+        </div>
+        <div class="db-kpi">
+          <div id="mpLbl" class="db-kpi-lbl">Mes anterior</div>
+          <div id="mpAmt" class="db-kpi-val">—</div>
+          <div id="mpPct" class="db-kpi-sub">—</div>
+        </div>
+        <div class="db-kpi">
+          <div class="db-kpi-lbl">Retorno Total</div>
+          <div id="retTot" class="db-kpi-val">—</div>
+          <div id="retDol" class="db-kpi-sub" style="color:var(--muted);">—</div>
+        </div>
+        <div class="db-kpi">
+          <div class="db-kpi-lbl">Profit Factor</div>
+          <div id="pf"    class="db-kpi-val">—</div>
+          <div class="db-kpi-sub" style="color:var(--muted);">Mínimo 1.30</div>
+        </div>
       </div>
-      <div class="dd-bar-bg">
-        <div class="dd-bar-fill" style="width:21.8%;background:#00c896"></div>
+
+      <div class="db-stat-grid">
+        <div class="db-stat">
+          <div class="db-stat-lbl">Win Rate</div>
+          <div id="wr" class="db-stat-val">—</div>
+        </div>
+        <div class="db-stat">
+          <div class="db-stat-lbl">Trades</div>
+          <div id="tc" class="db-stat-val" style="color:var(--text);">—</div>
+        </div>
+        <div class="db-stat">
+          <div class="db-stat-lbl">R:R Prom</div>
+          <div id="rr" class="db-stat-val">—</div>
+        </div>
       </div>
-      <div class="dd-limit">Límite prop firm: 8.00%</div>
-    </div>
-  </section>
 
-  <!-- MÉTRICAS CLAVE -->
-  <section class="metrics-grid">
-    <div class="metric-card">
-      <div class="metric-header">
-        <div class="metric-label">Capital Actual</div>
-        <button class="info-btn" onclick="toggleTip('tip-capital')">?</button>
+      <div class="db-sl">Equity Curve</div>
+      <div class="db-card">
+        <div class="db-chart-wrap">
+          <canvas id="eqChart"></canvas>
+        </div>
       </div>
-      <div class="tooltip-panel" id="tip-capital">
-        Capital inicial más todas las ganancias y pérdidas acumuladas desde el inicio. Es el patrimonio real de la cuenta en este momento.
+
+      <div class="db-hl-grid">
+        <div class="db-hl-pos">
+          <div class="db-hl-lbl">Mejor trade</div>
+          <div id="bestVal"  class="db-hl-val" style="color:var(--green);">—</div>
+          <div id="bestDate" class="db-hl-date">—</div>
+        </div>
+        <div class="db-hl-neg">
+          <div class="db-hl-lbl">Peor trade</div>
+          <div id="worstVal"  class="db-hl-val" style="color:var(--red);">—</div>
+          <div id="worstDate" class="db-hl-date">—</div>
+        </div>
       </div>
-      <div class="metric-value" style="color:var(--green)">$24,817</div>
-      <div class="metric-sub">Inicial: $25,000</div>
-    </div>
-    <div class="metric-card">
-      <div class="metric-header">
-        <div class="metric-label">Retorno Total</div>
-        <button class="info-btn" onclick="toggleTip('tip-retorno')">?</button>
+
+    </div><!-- /.db-left -->
+
+    <!-- RIGHT -->
+    <div class="db-right">
+
+      <div class="db-sl">Control de riesgo</div>
+      <div class="db-card">
+        <div class="db-dd-row">
+          <div class="db-dd-lr">
+            <span style="color:var(--muted)">DD Diario</span>
+            <span style="font-family:var(--fm)"><span id="ddDv">0.00%</span> <span style="color:var(--dim)">/&nbsp;4%</span></span>
+          </div>
+          <div class="db-bar-bg"><div id="ddDb" class="db-bar-fill" style="width:0%;background:var(--green)"></div></div>
+          <div class="db-dd-limit">Kill switch: 4.00%</div>
+        </div>
+        <div class="db-dd-row">
+          <div class="db-dd-lr">
+            <span style="color:var(--muted)">DD Máximo Hist.</span>
+            <span style="font-family:var(--fm)"><span id="ddMv">0.00%</span> <span style="color:var(--dim)">/&nbsp;8%</span></span>
+          </div>
+          <div class="db-bar-bg"><div id="ddMb" class="db-bar-fill" style="width:0%;background:var(--green)"></div></div>
+          <div class="db-dd-limit">Límite prop firm: 8.00%</div>
+        </div>
       </div>
-      <div class="tooltip-panel" id="tip-retorno">
-        Rendimiento porcentual desde el inicio. Se calcula sobre el capital inicial del prop firm ($25,000). El monto en dólares se muestra abajo.
-      </div>
-      <div class="metric-value" style="color:var(--red)">-0.73%</div>
-      <div class="metric-sub">$-182.74</div>
-    </div>
-    <div class="metric-card">
-      <div class="metric-header">
-        <div class="metric-label">Win Rate</div>
-        <button class="info-btn" onclick="toggleTip('tip-winrate')">?</button>
-      </div>
-      <div class="tooltip-panel" id="tip-winrate">
-        Porcentaje de trades que terminaron en ganancia. Con R:R 1:2, el break-even teórico es 33% — cualquier valor sobre eso es rentable. El mínimo aceptable del prop firm es 40%.
-      </div>
-      <div class="metric-value" style="color:#f59e0b">32.0%</div>
-      <div class="metric-sub">16 / 50 trades</div>
-    </div>
-    <div class="metric-card">
-      <div class="metric-header">
-        <div class="metric-label">Profit Factor</div>
-        <button class="info-btn" onclick="toggleTip('tip-pf')">?</button>
-      </div>
-      <div class="tooltip-panel" id="tip-pf">
-        Por cada $1 perdido, cuánto se ganó. PF = ganancias brutas / pérdidas brutas. Menos de 1.0 significa que el bot pierde dinero. El mínimo aceptable es 1.30.
-      </div>
-      <div class="metric-value" style="color:#ff4d6d">0.88</div>
-      <div class="metric-sub">Mínimo: 1.30</div>
-    </div>
-    <div class="metric-card">
-      <div class="metric-header">
-        <div class="metric-label">R:R Promedio</div>
-        <button class="info-btn" onclick="toggleTip('tip-rr')">?</button>
-      </div>
-      <div class="tooltip-panel" id="tip-rr">
-        Relación entre el promedio de pips ganados y el promedio de pips perdidos. El target de la estrategia es 2.0 (ganar el doble de lo que se arriesga). Un valor bajo indica que el precio no llega al TP o que el break-even está cortando trades temprano.
-      </div>
-      <div class="metric-value" style="color:var(--text)">2.26</div>
-      <div class="metric-sub">Target: 2.00</div>
-    </div>
-    <div class="metric-card">
-      <div class="metric-header">
-        <div class="metric-label">PnL Hoy</div>
-        <button class="info-btn" onclick="toggleTip('tip-pnl')">?</button>
-      </div>
-      <div class="tooltip-panel" id="tip-pnl">
-        Ganancia o pérdida neta en trades cerrados durante el día de hoy. No incluye posiciones que siguen abiertas. Se usa para calcular el DD diario.
-      </div>
-      <div class="metric-value" style="color:var(--red)">$-49.24</div>
-      <div class="metric-sub">Sesión actual</div>
-    </div>
-    <div class="metric-card">
-      <div class="metric-header">
-        <div class="metric-label">Total Trades</div>
-        <button class="info-btn" onclick="toggleTip('tip-trades')">?</button>
-      </div>
-      <div class="tooltip-panel" id="tip-trades">
-        Cantidad de operaciones cerradas desde el inicio. Con menos de 50 trades las métricas son orientativas — se necesitan al menos 50 para que el win rate y el profit factor sean estadísticamente confiables.
-      </div>
-      <div class="metric-value" style="color:var(--text)">50</div>
-      <div class="metric-sub">Desde el inicio</div>
-    </div>
-    <div class="metric-card">
-      <div class="metric-header">
-        <div class="metric-label">Pips Promedio</div>
-        <button class="info-btn" onclick="toggleTip('tip-pips')">?</button>
-      </div>
-      <div class="tooltip-panel" id="tip-pips">
-        Promedio de pips por trade cerrado, contando tanto ganadores como perdedores. Un número bajo puede indicar que los TP no se están alcanzando completos o que el break-even está cerrando trades antes de tiempo.
-      </div>
-      <div class="metric-value" style="color:var(--text)">9.8</div>
-      <div class="metric-sub">Por trade cerrado</div>
-    </div>
-  </section>
 
-  <!-- EQUITY CURVE -->
-  <div class="chart-card">
-    <div class="card-title">Equity Curve</div>
-    <div class="chart-wrap">
-      <canvas id="equityChart"></canvas>
-    </div>
-  </div>
+      <div class="db-sl">Historial mensual</div>
+      <div class="db-card"><div id="histBars"></div></div>
 
-  <!-- TABLAS -->
-  <div class="tables-grid">
-    <div class="table-card">
-      <div class="card-title">Últimos Trades</div>
-      <div class="table-scroll">
-        <table>
-          <thead><tr>
-            <th>#</th><th>Apertura</th><th>Tipo</th><th>Par</th>
-            <th>Entrada</th><th>Cierre</th><th>Pips</th><th>USD</th><th>Estado</th>
-          </tr></thead>
-          <tbody>
-        <tr style="background:#ff4d6d18">
-            <td>#57</td>
-            <td>2026-04-08 10:47</td>
-            <td class="buy">Buy</td>
-            <td>EURUSDm</td>
-            <td>1.1697800000000003</td>
-            <td>1.16863</td>
-            <td style="color:#ff4d6d">-115.00</td>
-            <td style="color:#ff4d6d">$-41.40</td>
-            <td>✅ TP</td>
-        </tr>
-
-        <tr style="background:#ff4d6d18">
-            <td>#56</td>
-            <td>2026-04-08 10:32</td>
-            <td class="buy">Buy</td>
-            <td>EURUSDm</td>
-            <td>1.1701400000000002</td>
-            <td>1.16942</td>
-            <td style="color:#ff4d6d">-72.00</td>
-            <td style="color:#ff4d6d">$-28.08</td>
-            <td>✅ TP</td>
-        </tr>
-
-        <tr style="background:#ff4d6d18">
-            <td>#55</td>
-            <td>2026-04-08 08:47</td>
-            <td class="buy">Buy</td>
-            <td>EURUSDm</td>
-            <td>1.1703200000000002</td>
-            <td>1.16931</td>
-            <td style="color:#ff4d6d">-101.00</td>
-            <td style="color:#ff4d6d">$-40.40</td>
-            <td>✅ TP</td>
-        </tr>
-
-        <tr style="background:#00c89618">
-            <td>#54</td>
-            <td>2026-04-08 05:46</td>
-            <td class="buy">Buy</td>
-            <td>EURUSDm</td>
-            <td>1.1679300000000001</td>
-            <td>1.1709100000000001</td>
-            <td style="color:#00c896">+298.00</td>
-            <td style="color:#00c896">$+104.30</td>
-            <td>✅ TP</td>
-        </tr>
-
-        <tr style="background:#ff4d6d18">
-            <td>#53</td>
-            <td>2026-04-08 05:31</td>
-            <td class="buy">Buy</td>
-            <td>EURUSDm</td>
-            <td>1.1684800000000002</td>
-            <td>1.1673</td>
-            <td style="color:#ff4d6d">-118.00</td>
-            <td style="color:#ff4d6d">$-43.66</td>
-            <td>✅ TP</td>
-        </tr>
-
-        <tr style="background:#00c89618">
-            <td>#52</td>
-            <td>2026-04-08 04:16</td>
-            <td class="buy">Buy</td>
-            <td>EURUSDm</td>
-            <td>1.1683100000000002</td>
-            <td>1.16831</td>
-            <td style="color:#ff4d6d">-0.00</td>
-            <td style="color:#00c896">$+0.00</td>
-            <td>✅ TP</td>
-        </tr>
-
-        <tr style="background:#00c89618">
-            <td>#51</td>
-            <td>2026-04-08 03:01</td>
-            <td class="buy">Buy</td>
-            <td>EURUSDm</td>
-            <td>1.1688500000000002</td>
-            <td>1.16885</td>
-            <td style="color:#ff4d6d">-0.00</td>
-            <td style="color:#00c896">$+0.00</td>
-            <td>✅ TP</td>
-        </tr>
-
-        <tr style="background:#00c89618">
-            <td>#50</td>
-            <td>2026-04-07 23:45</td>
-            <td class="buy">Buy</td>
-            <td>EURUSDm</td>
-            <td>1.1672300000000002</td>
-            <td>1.17033</td>
-            <td style="color:#00c896">+310.00</td>
-            <td style="color:#00c896">$+111.60</td>
-            <td>✅ TP</td>
-        </tr>
-
-        <tr style="background:#00c89618">
-            <td>#49</td>
-            <td>2026-04-06 12:23</td>
-            <td class="sell">Sell</td>
-            <td>EURUSDm</td>
-            <td>1.15412</td>
-            <td>1.15257</td>
-            <td style="color:#00c896">+155.00</td>
-            <td style="color:#00c896">$+80.60</td>
-            <td>✅ TP</td>
-        </tr>
-
-        <tr style="background:#ff4d6d18">
-            <td>#48</td>
-            <td>2026-04-06 12:08</td>
-            <td class="buy">Buy</td>
-            <td>EURUSDm</td>
-            <td>1.1542100000000002</td>
-            <td>1.15366</td>
-            <td style="color:#ff4d6d">-55.00</td>
-            <td style="color:#ff4d6d">$-28.60</td>
-            <td>✅ TP</td>
-        </tr>
-
-        <tr style="background:#ff4d6d18">
-            <td>#47</td>
-            <td>2026-04-06 11:53</td>
-            <td class="buy">Buy</td>
-            <td>EURUSDm</td>
-            <td>1.1554100000000003</td>
-            <td>1.15496</td>
-            <td style="color:#ff4d6d">-45.00</td>
-            <td style="color:#ff4d6d">$-26.55</td>
-            <td>✅ TP</td>
-        </tr>
-
-        <tr style="background:#ff4d6d18">
-            <td>#46</td>
-            <td>2026-04-06 11:23</td>
-            <td class="buy">Buy</td>
-            <td>EURUSDm</td>
-            <td>1.1564600000000003</td>
-            <td>1.15613</td>
-            <td style="color:#ff4d6d">-33.00</td>
-            <td style="color:#ff4d6d">$-22.11</td>
-            <td>✅ TP</td>
-        </tr>
-
-        <tr style="background:#ff4d6d18">
-            <td>#45</td>
-            <td>2026-04-06 10:37</td>
-            <td class="buy">Buy</td>
-            <td>EURUSDm</td>
-            <td>1.1557500000000003</td>
-            <td>1.15539</td>
-            <td style="color:#ff4d6d">-36.00</td>
-            <td style="color:#ff4d6d">$-26.28</td>
-            <td>✅ TP</td>
-        </tr>
-
-        <tr style="background:#ff4d6d18">
-            <td>#44</td>
-            <td>2026-04-06 07:37</td>
-            <td class="sell">Sell</td>
-            <td>EURUSDm</td>
-            <td>1.15491</td>
-            <td>1.15605</td>
-            <td style="color:#ff4d6d">-114.00</td>
-            <td style="color:#ff4d6d">$-72.96</td>
-            <td>✅ TP</td>
-        </tr>
-
-        <tr style="background:#ff4d6d18">
-            <td>#43</td>
-            <td>2026-04-06 07:07</td>
-            <td class="buy">Buy</td>
-            <td>EURUSDm</td>
-            <td>1.1552000000000002</td>
-            <td>1.15471</td>
-            <td style="color:#ff4d6d">-49.00</td>
-            <td style="color:#ff4d6d">$-29.40</td>
-            <td>✅ TP</td>
-        </tr>
-
-        <tr style="background:#00c89618">
-            <td>#42</td>
-            <td>2026-04-06 04:52</td>
-            <td class="sell">Sell</td>
-            <td>EURUSDm</td>
-            <td>1.1562400000000002</td>
-            <td>1.15487</td>
-            <td style="color:#00c896">+137.00</td>
-            <td style="color:#00c896">$+78.09</td>
-            <td>✅ TP</td>
-        </tr>
-
-        <tr style="background:#ff4d6d18">
-            <td>#41</td>
-            <td>2026-04-06 04:36</td>
-            <td class="sell">Sell</td>
-            <td>EURUSDm</td>
-            <td>1.15426</td>
-            <td>1.155</td>
-            <td style="color:#ff4d6d">-74.00</td>
-            <td style="color:#ff4d6d">$-55.50</td>
-            <td>✅ TP</td>
-        </tr>
-
-        <tr style="background:#ff4d6d18">
-            <td>#40</td>
-            <td>2026-04-06 03:51</td>
-            <td class="sell">Sell</td>
-            <td>EURUSDm</td>
-            <td>1.15301</td>
-            <td>1.15395</td>
-            <td style="color:#ff4d6d">-94.00</td>
-            <td style="color:#ff4d6d">$-86.48</td>
-            <td>✅ TP</td>
-        </tr>
-
-        <tr style="background:#ff4d6d18">
-            <td>#39</td>
-            <td>2026-04-06 02:06</td>
-            <td class="sell">Sell</td>
-            <td>EURUSDm</td>
-            <td>1.15236</td>
-            <td>1.15324</td>
-            <td style="color:#ff4d6d">-88.00</td>
-            <td style="color:#ff4d6d">$-87.12</td>
-            <td>✅ TP</td>
-        </tr>
-
-        <tr style="background:#ff4d6d18">
-            <td>#38</td>
-            <td>2026-04-05 20:35</td>
-            <td class="sell">Sell</td>
-            <td>EURUSDm</td>
-            <td>1.15108</td>
-            <td>1.15198</td>
-            <td style="color:#ff4d6d">-90.00</td>
-            <td style="color:#ff4d6d">$-80.10</td>
-            <td>✅ TP</td>
-        </tr></tbody>
-        </table>
-      </div>
-    </div>
-    <div class="table-card">
-      <div class="card-title">Por Sesión</div>
-      <div class="table-scroll">
-        <table>
+      <div class="db-sl">Por sesión</div>
+      <div class="db-card" style="margin-bottom:0">
+        <table class="db-ses">
           <thead><tr>
             <th>Sesión</th><th>Trades</th><th>WR</th><th>PnL</th>
           </tr></thead>
-          <tbody>
-        <tr>
-            <td>Sin datos</td>
-            <td>50</td>
-            <td>32.0%</td>
-            <td style="color:#ff4d6d">$-182.74</td>
-        </tr></tbody>
+          <tbody id="sesRows"></tbody>
         </table>
       </div>
+
+    </div><!-- /.db-right -->
+
+    <!-- FULL: Trades -->
+    <div class="db-full" style="margin-top:4px">
+      <div class="db-sl">Últimas operaciones</div>
+      <div style="background:var(--surf);border:1px solid var(--brd);border-radius:10px;overflow:hidden">
+        <div class="db-th">
+          <span class="db-th-c">Par</span>
+          <span class="db-th-c">Tipo</span>
+          <span class="db-th-c">Fecha</span>
+          <span class="db-th-c hm">Pips</span>
+          <span class="db-th-c">PnL</span>
+          <span class="db-th-c">Estado</span>
+        </div>
+        <div id="tradeRows"></div>
+      </div>
     </div>
-  </div>
 
-  <!-- RESUMEN MENSUAL -->
-  <div class="chart-card">
-    <div class="card-title">Rendimiento Mensual</div>
-    <div class="table-scroll">
-      <table>
-        <thead><tr>
-          <th>Mes</th><th>Trades</th><th>WR</th><th>PnL (USD)</th><th>PnL (%)</th>
-        </tr></thead>
-        <tbody>
-        <tr>
-            <td>Mar 2026</td>
-            <td>13</td>
-            <td>46.2%</td>
-            <td style="color:#ff4d6d">$-104.96</td>
-            <td style="color:#ff4d6d">-0.42%</td>
-        </tr>
-
-        <tr>
-            <td>Abr 2026</td>
-            <td>37</td>
-            <td>27.0%</td>
-            <td style="color:#ff4d6d">$-77.78</td>
-            <td style="color:#ff4d6d">-0.31%</td>
-        </tr></tbody>
-      </table>
-    </div>
-  </div>
-
-</main>
-
-<footer class="footer">
-  <span>Trading Bot v1.3.12 — Prop Firm $25K · DD 4%/8%</span>
-  <span>Generado: 08/04/2026 19:29 ARG</span>
-</footer>
+  </div><!-- /.db-body -->
+</div><!-- /.db -->
 
 <script>
-const labels = ["2026-03-25", "2026-03-26", "2026-03-26", "2026-03-26", "2026-03-27", "2026-03-27", "2026-03-27", "2026-03-27", "2026-03-27", "2026-03-31", "2026-03-31", "2026-03-31", "2026-03-31", "2026-04-01", "2026-04-01", "2026-04-01", "2026-04-01", "2026-04-01", "2026-04-01", "2026-04-01", "2026-04-02", "2026-04-02", "2026-04-02", "2026-04-02", "2026-04-02", "2026-04-03", "2026-04-05", "2026-04-05", "2026-04-05", "2026-04-05", "2026-04-05", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-07", "2026-04-08", "2026-04-08", "2026-04-08", "2026-04-08", "2026-04-08", "2026-04-08", "2026-04-08"];
-const valores = [24983.2, 24784.75, 24618.83, 24697.8, 24775.19, 24690.77, 24601.73, 24674.58, 24764.46, 24861.06, 24828.2, 24787.04, 24895.04, 24859.68, 24969.16, 24935.54, 24896.74, 25006.72, 25006.72, 24958.72, 24938.42, 24905.97, 24905.97, 25009.45, 24975.01, 24986.71, 25077.49, 25075.71, 25071.26, 25111.31, 25031.21, 24944.09, 24857.61, 24802.11, 24880.2, 24850.8, 24777.84, 24751.56, 24729.45, 24702.9, 24674.3, 24754.9, 24866.5, 24866.5, 24866.5, 24822.84, 24927.14, 24886.74, 24858.66, 24817.26];
+const D = {"eurusd": {"par": "EURUSDm", "version": "v1.3.7", "badge": "live", "badgeLabel": "LIVE", "estrategia": "EMA 9/21 · ADX>25 · ATR 1.5x · R:R 1:2 · Risk 0.2%", "rrTarget": 2.0, "capitalActual": 24817.26, "capitalIni": 25000.0, "retornoTotalStr": "-0.73%", "retornoColor": "#f85149", "gananciaTotalStr": "$-182.74", "pnlHoyStr": "$-49.24", "pnlHoyColor": "#f85149", "winRateStr": "32.0%", "winRateColor": "#e3b341", "tradesTotal": 50, "rrProm": 2.26, "rrColor": "#3fb950", "profitFactor": 0.88, "pfColor": "#f85149", "ddDiario": {"val": "0.20%", "pct": 5.0, "color": "#3fb950"}, "ddMaximo": {"val": "1.74%", "pct": 21.8, "color": "#3fb950"}, "mesActual": {"label": "Abr 2026", "pnlStr": "$-77.78", "pctStr": "-0.31%", "color": "#f85149"}, "mesAnterior": {"label": "Mar 2026", "pnlStr": "$-104.96", "pctStr": "-0.42%", "color": "#f85149"}, "equityLabels": ["2026-03-25", "2026-03-26", "2026-03-26", "2026-03-26", "2026-03-27", "2026-03-27", "2026-03-27", "2026-03-27", "2026-03-27", "2026-03-31", "2026-03-31", "2026-03-31", "2026-03-31", "2026-04-01", "2026-04-01", "2026-04-01", "2026-04-01", "2026-04-01", "2026-04-01", "2026-04-01", "2026-04-02", "2026-04-02", "2026-04-02", "2026-04-02", "2026-04-02", "2026-04-03", "2026-04-05", "2026-04-05", "2026-04-05", "2026-04-05", "2026-04-05", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-07", "2026-04-08", "2026-04-08", "2026-04-08", "2026-04-08", "2026-04-08", "2026-04-08", "2026-04-08"], "equityValores": [24983.2, 24784.75, 24618.83, 24697.8, 24775.19, 24690.77, 24601.73, 24674.58, 24764.46, 24861.06, 24828.2, 24787.04, 24895.04, 24859.68, 24969.16, 24935.54, 24896.74, 25006.72, 25006.72, 24958.72, 24938.42, 24905.97, 24905.97, 25009.45, 24975.01, 24986.71, 25077.49, 25075.71, 25071.26, 25111.31, 25031.21, 24944.09, 24857.61, 24802.11, 24880.2, 24850.8, 24777.84, 24751.56, 24729.45, 24702.9, 24674.3, 24754.9, 24866.5, 24866.5, 24866.5, 24822.84, 24927.14, 24886.74, 24858.66, 24817.26], "bestTrade": {"pnlStr": "$+111.60", "fecha": "EURUSDm · 07 Abr"}, "worstTrade": {"pnlStr": "$-198.45", "fecha": "EURUSDm · 26 Mar"}, "history": [{"mes": "Mar 2026", "pnl": -104.96, "pct": -0.42, "total": 13, "ganadores": 6}, {"mes": "Abr 2026", "pnl": -77.78, "pct": -0.31, "total": 37, "ganadores": 10}], "sesiones": [{"sesion": "Sin datos", "total": 50, "wr": 32.0, "pnlStr": "$-182.74", "color": "#f85149"}], "trades": [{"tipo": "Buy", "fecha": "08 Abr", "par": "EURUSDm", "pipsStr": "-115.0", "pnlStr": "$-41.40", "color": "#f85149", "estado": "❌ SL"}, {"tipo": "Buy", "fecha": "08 Abr", "par": "EURUSDm", "pipsStr": "-72.0", "pnlStr": "$-28.08", "color": "#f85149", "estado": "❌ SL"}, {"tipo": "Buy", "fecha": "08 Abr", "par": "EURUSDm", "pipsStr": "-101.0", "pnlStr": "$-40.40", "color": "#f85149", "estado": "❌ SL"}, {"tipo": "Buy", "fecha": "08 Abr", "par": "EURUSDm", "pipsStr": "+298.0", "pnlStr": "$+104.30", "color": "#3fb950", "estado": "✅ TP"}, {"tipo": "Buy", "fecha": "08 Abr", "par": "EURUSDm", "pipsStr": "-118.0", "pnlStr": "$-43.66", "color": "#f85149", "estado": "❌ SL"}, {"tipo": "Buy", "fecha": "08 Abr", "par": "EURUSDm", "pipsStr": "-0.0", "pnlStr": "$+0.00", "color": "#3fb950", "estado": "❌ SL"}, {"tipo": "Buy", "fecha": "08 Abr", "par": "EURUSDm", "pipsStr": "-0.0", "pnlStr": "$+0.00", "color": "#3fb950", "estado": "❌ SL"}, {"tipo": "Buy", "fecha": "07 Abr", "par": "EURUSDm", "pipsStr": "+310.0", "pnlStr": "$+111.60", "color": "#3fb950", "estado": "✅ TP"}, {"tipo": "Sell", "fecha": "06 Abr", "par": "EURUSDm", "pipsStr": "+155.0", "pnlStr": "$+80.60", "color": "#3fb950", "estado": "✅ TP"}, {"tipo": "Buy", "fecha": "06 Abr", "par": "EURUSDm", "pipsStr": "-55.0", "pnlStr": "$-28.60", "color": "#f85149", "estado": "❌ SL"}, {"tipo": "Buy", "fecha": "06 Abr", "par": "EURUSDm", "pipsStr": "-45.0", "pnlStr": "$-26.55", "color": "#f85149", "estado": "❌ SL"}, {"tipo": "Buy", "fecha": "06 Abr", "par": "EURUSDm", "pipsStr": "-33.0", "pnlStr": "$-22.11", "color": "#f85149", "estado": "❌ SL"}, {"tipo": "Buy", "fecha": "06 Abr", "par": "EURUSDm", "pipsStr": "-36.0", "pnlStr": "$-26.28", "color": "#f85149", "estado": "❌ SL"}, {"tipo": "Sell", "fecha": "06 Abr", "par": "EURUSDm", "pipsStr": "-114.0", "pnlStr": "$-72.96", "color": "#f85149", "estado": "❌ SL"}, {"tipo": "Buy", "fecha": "06 Abr", "par": "EURUSDm", "pipsStr": "-49.0", "pnlStr": "$-29.40", "color": "#f85149", "estado": "❌ SL"}, {"tipo": "Sell", "fecha": "06 Abr", "par": "EURUSDm", "pipsStr": "+137.0", "pnlStr": "$+78.09", "color": "#3fb950", "estado": "✅ TP"}, {"tipo": "Sell", "fecha": "06 Abr", "par": "EURUSDm", "pipsStr": "-74.0", "pnlStr": "$-55.50", "color": "#f85149", "estado": "❌ SL"}, {"tipo": "Sell", "fecha": "06 Abr", "par": "EURUSDm", "pipsStr": "-94.0", "pnlStr": "$-86.48", "color": "#f85149", "estado": "❌ SL"}, {"tipo": "Sell", "fecha": "06 Abr", "par": "EURUSDm", "pipsStr": "-88.0", "pnlStr": "$-87.12", "color": "#f85149", "estado": "❌ SL"}, {"tipo": "Sell", "fecha": "05 Abr", "par": "EURUSDm", "pipsStr": "-90.0", "pnlStr": "$-80.10", "color": "#f85149", "estado": "❌ SL"}]}, "xauusd": {"par": "XAUUSDm", "version": "v0.1.0", "badge": "staging", "badgeLabel": "STAGING", "estrategia": "EMA 9/21 · RSI zona · ATR 1.5x · R:R 1:3 · Risk 0.2%", "rrTarget": 3.0, "capitalActual": 25000.0, "capitalIni": 25000.0, "retornoTotalStr": "+0.00%", "retornoColor": "#3fb950", "gananciaTotalStr": "$+0.00", "pnlHoyStr": "$+0.00", "pnlHoyColor": "#3fb950", "winRateStr": "0.0%", "winRateColor": "#e3b341", "tradesTotal": 0, "rrProm": 0.0, "rrColor": "#f85149", "profitFactor": 0.0, "pfColor": "#f85149", "ddDiario": {"val": "0.00%", "pct": 0.0, "color": "#3fb950"}, "ddMaximo": {"val": "0.00%", "pct": 0.0, "color": "#3fb950"}, "mesActual": {"label": "Abr 2026", "pnlStr": "$+0.00", "pctStr": "+0.00%", "color": "#3fb950"}, "mesAnterior": {"label": "Mar 2026", "pnlStr": "$+0.00", "pctStr": "+0.00%", "color": "#3fb950"}, "equityLabels": [], "equityValores": [], "bestTrade": {"pnlStr": "$0.00", "fecha": "—"}, "worstTrade": {"pnlStr": "$0.00", "fecha": "—"}, "history": [], "sesiones": [], "trades": []}};
+let chart = null;
 
-const ctx = document.getElementById('equityChart').getContext('2d');
+function renderHistory(h) {
+  const max = Math.max(...h.map(x => Math.abs(x.pnl)), 1);
+  document.getElementById('histBars').innerHTML = h.map(x => {
+    const pos = x.pnl >= 0, col = pos ? '#3fb950' : '#f85149';
+    const pct = Math.round(Math.abs(x.pnl) / max * 100);
+    const ps  = (pos?'+':'-') + '$' + Math.abs(x.pnl).toFixed(0);
+    const pp  = (pos?'+':'') + x.pct.toFixed(1) + '%';
+    return `<div class="db-hist-row">
+      <span class="db-hist-lbl">${x.mes.split(' ')[0]}</span>
+      <div class="db-hist-bar-wrap">
+        <div class="db-hist-bar-bg"><div class="db-hist-bar" style="width:${pct}%;background:${col}"></div></div>
+        <span class="db-hist-pct" style="color:${col}">${pp}</span>
+      </div>
+      <span class="db-hist-pnl" style="color:${col}">${ps}</span>
+    </div>`;
+  }).join('');
+}
 
-// Gradiente de relleno
-const gradient = ctx.createLinearGradient(0, 0, 0, 260);
-gradient.addColorStop(0, 'rgba(0,200,150,0.25)');
-gradient.addColorStop(1, 'rgba(0,200,150,0.0)');
+function renderSesiones(s) {
+  document.getElementById('sesRows').innerHTML = s.map(x =>
+    `<tr>
+      <td style="color:var(--text)">${x.sesion}</td>
+      <td style="color:var(--muted);font-family:var(--fm)">${x.total}</td>
+      <td style="color:var(--blue);font-family:var(--fm)">${x.wr}%</td>
+      <td style="color:${x.color};font-family:var(--fm)">${x.pnlStr}</td>
+    </tr>`
+  ).join('');
+}
 
-new Chart(ctx, {
+function renderTrades(trades) {
+  document.getElementById('tradeRows').innerHTML = trades.map(t => {
+    const tc = t.tipo === 'Buy' ? 't-buy' : 't-sell';
+    const bc = t.estado.includes('TP') ? 'b-tp' : t.estado.includes('SL') ? 'b-sl' : 'b-op';
+    return `<div class="db-tr">
+      <span style="color:var(--text);font-family:var(--fm)">${t.par}</span>
+      <span class="${tc}">${t.tipo}</span>
+      <span style="color:var(--muted)">${t.fecha}</span>
+      <span class="hm" style="color:var(--muted);font-family:var(--fm)">${t.pipsStr}</span>
+      <span style="color:${t.color};font-family:var(--fm);font-weight:500">${t.pnlStr}</span>
+      <span class="${bc}">${t.estado}</span>
+    </div>`;
+  }).join('');
+}
+
+function set(id, txt, color) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = txt;
+  if (color !== undefined) el.style.color = color;
+}
+
+function switchPair(id) {
+  const d = D[id];
+  document.querySelectorAll('.db-btn').forEach(b => b.classList.toggle('active', b.dataset.pair === id));
+  const badge = document.getElementById('pair-badge');
+  badge.className = d.badge === 'live' ? 'badge-live' : 'badge-staging';
+  badge.textContent = '● ' + d.badgeLabel;
+  set('hdr-sub', d.estrategia);
+  set('pairName', d.par);
+  set('pairVer',  d.version + ' · ' + d.estrategia.split('·')[0].trim());
+  set('pairCap',  '$' + d.capitalActual.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}), d.retornoColor);
+  set('pairRet',  d.retornoTotalStr, d.retornoColor);
+  set('maLbl', 'Mes actual · ' + d.mesActual.label);
+  set('maAmt', d.mesActual.pnlStr, d.mesActual.color);
+  set('maPct', d.mesActual.pctStr, d.mesActual.color);
+  set('mpLbl', 'Mes anterior · ' + d.mesAnterior.label);
+  set('mpAmt', d.mesAnterior.pnlStr, d.mesAnterior.color);
+  set('mpPct', d.mesAnterior.pctStr, d.mesAnterior.color);
+  set('retTot', d.retornoTotalStr, d.retornoColor);
+  set('retDol', d.gananciaTotalStr);
+  set('pf',  String(d.profitFactor), d.pfColor);
+  set('wr',  d.winRateStr, d.winRateColor);
+  set('tc',  String(d.tradesTotal));
+  set('rr',  String(d.rrProm), d.rrColor);
+  set('ddDv', d.ddDiario.val, d.ddDiario.color);
+  const db = document.getElementById('ddDb');
+  db.style.width = d.ddDiario.pct + '%'; db.style.background = d.ddDiario.color;
+  set('ddMv', d.ddMaximo.val, d.ddMaximo.color);
+  const mb = document.getElementById('ddMb');
+  mb.style.width = d.ddMaximo.pct + '%'; mb.style.background = d.ddMaximo.color;
+  set('bestVal',  d.bestTrade.pnlStr);
+  set('bestDate', d.bestTrade.fecha);
+  set('worstVal',  d.worstTrade.pnlStr);
+  set('worstDate', d.worstTrade.fecha);
+  if (chart) {
+    chart.data.labels = d.equityLabels;
+    chart.data.datasets[0].data = d.equityValores;
+    chart.update('none');
+  }
+  renderHistory(d.history);
+  renderSesiones(d.sesiones);
+  renderTrades(d.trades);
+}
+
+const ctx = document.getElementById('eqChart').getContext('2d');
+chart = new Chart(ctx, {
   type: 'line',
   data: {
-    labels: labels,
+    labels: D.eurusd.equityLabels,
     datasets: [{
-      data: valores,
-      borderColor: '#00c896',
-      borderWidth: 2,
+      data: D.eurusd.equityValores,
+      borderColor: '#3fb950',
+      borderWidth: 1.5,
+      pointRadius: 1.5,
+      pointBackgroundColor: '#3fb950',
       fill: true,
-      backgroundColor: gradient,
-      pointRadius: labels.length > 100 ? 0 : 3,
-      pointHoverRadius: 5,
-      pointBackgroundColor: '#00c896',
-      tension: 0.3,
+      backgroundColor: (c) => {
+        const g = c.chart.ctx.createLinearGradient(0,0,0,160);
+        g.addColorStop(0,'rgba(63,185,80,0.18)');
+        g.addColorStop(1,'rgba(63,185,80,0)');
+        return g;
+      },
+      tension: 0.4
     }]
   },
   options: {
-    responsive: true,
-    maintainAspectRatio: false,
-    interaction: { intersect: false, mode: 'index' },
+    responsive: true, maintainAspectRatio: false,
     plugins: {
-      legend: { display: false },
+      legend: {display:false},
       tooltip: {
-        backgroundColor: '#141820',
-        borderColor: '#1f2535',
-        borderWidth: 1,
-        titleColor: '#64748b',
-        bodyColor: '#e2e8f0',
-        titleFont: { family: 'IBM Plex Mono', size: 10 },
-        bodyFont: { family: 'IBM Plex Mono', size: 12 },
-        callbacks: {
-          label: ctx => ' $' + ctx.parsed.y.toLocaleString('en-US', {minimumFractionDigits:2})
-        }
+        backgroundColor:'#161b22', borderColor:'#21262d', borderWidth:1,
+        titleColor:'#8b949e', bodyColor:'#3fb950',
+        callbacks: {label: v => '$'+v.raw.toLocaleString('en-US',{minimumFractionDigits:2})}
       }
     },
     scales: {
-      x: {
-        ticks: {
-          color: '#64748b',
-          font: { family: 'IBM Plex Mono', size: 9 },
-          maxTicksLimit: 8,
-          maxRotation: 0,
-        },
-        grid: { color: '#1f2535' },
-      },
-      y: {
-        ticks: {
-          color: '#64748b',
-          font: { family: 'IBM Plex Mono', size: 9 },
-          callback: v => '$' + v.toLocaleString('en-US')
-        },
-        grid: { color: '#1f2535' },
-      }
+      x: {grid:{color:'rgba(33,38,45,.8)'},ticks:{color:'#484f58',font:{size:9},maxTicksLimit:8}},
+      y: {grid:{color:'rgba(33,38,45,.8)'},ticks:{color:'#484f58',font:{size:9},callback:v=>'$'+v.toLocaleString('en-US')}}
     }
   }
 });
 
-// ── TOOLTIPS ──
-function toggleTip(id) {
-  const panel = document.getElementById(id);
-  const isVisible = panel.classList.contains('visible');
-  // Cerrar todos primero
-  document.querySelectorAll('.tooltip-panel').forEach(p => p.classList.remove('visible'));
-  // Abrir el clickeado si estaba cerrado
-  if (!isVisible) panel.classList.add('visible');
-}
-// Click fuera cierra todos
-document.addEventListener('click', function(e) {
-  if (!e.target.classList.contains('info-btn')) {
-    document.querySelectorAll('.tooltip-panel').forEach(p => p.classList.remove('visible'));
-  }
-});
+switchPair('eurusd');
 </script>
 </body>
 </html>
