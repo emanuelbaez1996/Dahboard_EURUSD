@@ -6,53 +6,59 @@
 <title>Trading Dashboard</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
-:root {
-  --font-sans: 'Segoe UI', system-ui, sans-serif;
-  --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
-}
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: #0d1117; color: #e6edf3; font-family: var(--font-sans); font-size: 14px; min-height: 100vh; }
-.db { background: #0d1117; border-radius: 16px; overflow: hidden; border: 1px solid #30363d; max-width: 1100px; margin: 16px auto; }
-.db-header { padding: 14px 20px; border-bottom: 0.5px solid #21262d; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-.db-header-title { flex: 1; min-width: 120px; }
-.db-header-title h2 { font-size: 15px; font-weight: 500; margin: 0; color: #e6edf3; }
-.db-header-title p { font-size: 11px; color: #8b949e; margin: 0; }
-.db-switcher { display: flex; gap: 6px; }
-.db-btn { padding: 7px 16px; border-radius: 8px; font-size: 12px; cursor: pointer; font-family: var(--font-mono); font-weight: 500; border: 0.5px solid #21262d; background: #0d1117; color: #484f58; transition: all 0.2s; }
-.db-btn.active { background: #1a2332; border-color: #58a6ff; color: #58a6ff; }
-.badge-live    { font-size: 11px; color: #3fb950; background: rgba(63,185,80,0.12); padding: 5px 12px; border-radius: 20px; border: 0.5px solid rgba(63,185,80,0.25); white-space: nowrap; }
-.badge-staging { font-size: 11px; color: #e3b341; background: rgba(227,179,65,0.12); padding: 5px 12px; border-radius: 20px; border: 0.5px solid rgba(227,179,65,0.25); white-space: nowrap; }
-.db-ts { font-size: 10px; color: #484f58; font-family: var(--font-mono); margin-left: auto; }
-.db-body { padding: 14px 20px; }
-.db-pair-card { background: #161b22; border: 0.5px solid #21262d; border-radius: 10px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-.db-kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
-.db-kpi { background: #161b22; border: 0.5px solid #21262d; border-radius: 10px; padding: 10px 12px; }
-.db-kpi-label { font-size: 10px; color: #8b949e; margin-bottom: 4px; }
-.db-kpi-val { font-size: 20px; font-weight: 500; font-family: var(--font-mono); line-height: 1; }
-.db-kpi-sub { font-size: 12px; font-family: var(--font-mono); margin-top: 3px; }
-.db-stat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 12px; }
-.db-stat { background: #161b22; border: 0.5px solid #21262d; border-radius: 10px; padding: 8px 10px; text-align: center; }
-.db-stat-label { font-size: 10px; color: #8b949e; margin-bottom: 4px; }
-.db-stat-val { font-size: 17px; font-weight: 500; font-family: var(--font-mono); }
-.db-section-label { font-size: 10px; color: #8b949e; letter-spacing: 0.6px; text-transform: uppercase; margin-bottom: 8px; }
-.db-card { background: #161b22; border: 0.5px solid #21262d; border-radius: 10px; padding: 10px 12px; margin-bottom: 12px; }
-.db-bar-track { background: #21262d; border-radius: 4px; height: 5px; overflow: hidden; }
-.db-bar-fill { height: 100%; border-radius: 4px; transition: width 0.4s ease; }
-.db-dd-row { margin-bottom: 10px; }
-.db-dd-row:last-child { margin-bottom: 0; }
-.db-dd-label { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 11px; }
-.db-highlight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
-.db-hl-pos { background: rgba(63,185,80,0.08); border: 0.5px solid rgba(63,185,80,0.25); border-radius: 10px; padding: 9px 12px; }
-.db-hl-neg { background: rgba(248,81,73,0.08); border: 0.5px solid rgba(248,81,73,0.25); border-radius: 10px; padding: 9px 12px; }
-.db-table-header { display: grid; grid-template-columns: 80px 45px 1fr 65px; padding: 7px 12px; border-bottom: 0.5px solid #21262d; }
-.db-table-row { display: grid; grid-template-columns: 80px 45px 1fr 65px; padding: 8px 12px; align-items: center; font-size: 11px; }
-.db-table-row + .db-table-row { border-top: 0.5px solid #21262d; }
-.db-table-row:hover { background: rgba(255,255,255,0.02); }
-.db-chart-wrap { position: relative; width: 100%; height: 120px; }
-@media(min-width: 640px) {
-  .db-body { display: grid; grid-template-columns: 1fr 320px; gap: 16px; align-items: start; }
-  .db-chart-wrap { height: 160px; }
-  .db-full { grid-column: 1 / -1; }
+:root { --font-sans:'Segoe UI',system-ui,sans-serif; --font-mono:'SFMono-Regular',Consolas,'Liberation Mono',monospace; }
+body { background:#0d1117; color:#e6edf3; font-family:var(--font-sans); font-size:14px; min-height:100vh; }
+.db { background:#0d1117; border-radius:14px; border:1px solid #30363d; color:#e6edf3; overflow:hidden; max-width:1100px; margin:16px auto; }
+.db-header { padding:14px 20px; border-bottom:0.5px solid #21262d; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+.db-title h2 { font-size:15px; font-weight:500; color:#e6edf3; }
+.db-title p { font-size:11px; color:#8b949e; margin-top:2px; }
+.db-switcher { display:flex; gap:6px; margin-left:auto; }
+.pb { padding:8px 18px; border-radius:8px; font-size:12px; cursor:pointer; font-family:var(--font-mono); font-weight:500; border:0.5px solid #21262d; background:#0d1117; color:#484f58; transition:all 0.18s; }
+.pb.on { background:#1a2332; border-color:#58a6ff; color:#58a6ff; }
+.badge-live    { font-size:11px; color:#3fb950; background:rgba(63,185,80,0.12); padding:5px 12px; border-radius:20px; border:0.5px solid rgba(63,185,80,0.25); white-space:nowrap; }
+.badge-staging { font-size:11px; color:#e3b341; background:rgba(227,179,65,0.12); padding:5px 12px; border-radius:20px; border:0.5px solid rgba(227,179,65,0.25); white-space:nowrap; }
+.db-ts { font-size:10px; color:#484f58; font-family:var(--font-mono); }
+.capital-banner { background:#111820; border-bottom:0.5px solid #21262d; padding:10px 20px; display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; }
+.cap-label { font-size:11px; color:#8b949e; text-transform:uppercase; letter-spacing:0.5px; }
+.cap-value { font-size:28px; font-weight:500; font-family:var(--font-mono); color:#e6edf3; letter-spacing:-0.5px; }
+.cap-pnl { font-size:13px; font-family:var(--font-mono); padding:3px 9px; border-radius:6px; }
+.cap-initial { font-size:11px; color:#484f58; font-family:var(--font-mono); margin-left:auto; }
+.db-body { padding:14px 20px; display:grid; gap:10px; }
+.pair-card { background:#161b22; border:0.5px solid #21262d; border-radius:10px; padding:10px 14px; display:flex; justify-content:space-between; align-items:center; }
+.pair-card .pname { font-size:13px; font-weight:500; font-family:var(--font-mono); }
+.pair-card .pdet { font-size:10px; color:#8b949e; margin-top:3px; }
+.kpi-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.kpi { background:#161b22; border:0.5px solid #21262d; border-radius:10px; padding:10px 12px; }
+.kpi-lbl { font-size:10px; color:#8b949e; margin-bottom:4px; }
+.kpi-val { font-size:22px; font-weight:500; font-family:var(--font-mono); line-height:1; }
+.kpi-sub { font-size:11px; font-family:var(--font-mono); margin-top:3px; color:#8b949e; }
+.stat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+.stat { background:#161b22; border:0.5px solid #21262d; border-radius:10px; padding:8px 10px; text-align:center; }
+.stat-lbl { font-size:10px; color:#8b949e; margin-bottom:3px; }
+.stat-val { font-size:13px; font-weight:500; font-family:var(--font-mono); }
+.gauge-row { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.gauge { background:#161b22; border:0.5px solid #21262d; border-radius:10px; padding:10px 12px; }
+.gauge-lbl { font-size:10px; color:#8b949e; margin-bottom:6px; display:flex; justify-content:space-between; }
+.gauge-track { height:6px; background:#21262d; border-radius:3px; overflow:hidden; }
+.gauge-fill { height:100%; border-radius:3px; transition:width 0.4s; }
+.section-lbl { font-size:10px; color:#8b949e; letter-spacing:0.5px; text-transform:uppercase; margin-bottom:6px; }
+.chart-wrap { position:relative; height:130px; width:100%; }
+.hist-grid { display:grid; gap:5px; }
+.hist-row { display:grid; grid-template-columns:40px 1fr 44px 54px; align-items:center; gap:8px; font-size:11px; }
+.hist-bar-bg { background:#21262d; border-radius:2px; height:6px; }
+.hist-bar-fill { height:6px; border-radius:2px; transition:width 0.3s; }
+.trades-table { width:100%; border-collapse:collapse; font-size:11px; font-family:var(--font-mono); }
+.trades-table th { text-align:left; color:#8b949e; font-weight:400; padding:4px 0; border-bottom:0.5px solid #21262d; }
+.trades-table td { padding:5px 0; border-bottom:0.5px solid #161b22; color:#c9d1d9; }
+@media(min-width:700px) {
+  .db-body { grid-template-columns:1fr 1fr; grid-template-areas:"pair pair" "kpi kpi" "stats stats" "gauges gauges" "equity history" "trades trades"; }
+  .pair-area  { grid-area:pair;    } .kpi-area    { grid-area:kpi;    } .stats-area { grid-area:stats;  }
+  .gauge-area { grid-area:gauges;  } .equity-area { grid-area:equity; } .history-area { grid-area:history; } .trades-area { grid-area:trades; }
+  .kpi-grid { grid-template-columns:repeat(4,1fr); }
+}
+@media(min-width:1000px) {
+  .db-body { grid-template-columns:1fr 1fr 1fr; grid-template-areas:"pair pair pair" "kpi kpi kpi" "stats gauges gauges" "equity equity history" "trades trades trades"; }
 }
 </style>
 </head>
@@ -60,240 +66,209 @@ body { background: #0d1117; color: #e6edf3; font-family: var(--font-sans); font-
 <div class="db">
 
   <div class="db-header">
-    <div class="db-header-title">
-      <h2>Trading Bot</h2>
-      <p>Prop Firm · MT5</p>
-    </div>
+    <div class="db-title"><h2>Trading Bot</h2><p>Prop firm · MT5</p></div>
     <div class="db-switcher">
-      <button class="db-btn active" data-pair="eurusd" onclick="switchPair('eurusd')">EURUSDm</button>
-      <button class="db-btn" data-pair="xauusd" onclick="switchPair('xauusd')">XAUUSDm</button>
+      <button class="pb on" id="btnEURUSD" onclick="switchPair('eurusd')">EURUSDm</button>
+      <button class="pb" id="btnXAUUSD" onclick="switchPair('xauusd')">XAUUSDm</button>
     </div>
     <span id="pair-badge" class="badge-live">● LIVE</span>
-    <span class="db-ts">Actualizado: 13/04/2026 10:06</span>
+    <span class="db-ts">Actualizado: 13/04/2026 10:28</span>
+  </div>
+
+  <div class="capital-banner">
+    <span class="cap-label">Capital</span>
+    <span class="cap-value" id="capValue">—</span>
+    <span class="cap-pnl" id="capPnl">—</span>
+    <span class="cap-initial" id="capInitial">—</span>
   </div>
 
   <div class="db-body">
-    <div class="db-left">
-
-      <div class="db-pair-card">
+    <div class="pair-area">
+      <div class="pair-card">
         <div>
-          <div id="pairName" style="font-size:14px;font-weight:500;font-family:var(--font-mono);color:#e6edf3;">—</div>
-          <div id="pairDetail" style="font-size:11px;color:#8b949e;margin-top:2px;">—</div>
+          <div class="pname" id="pairName">—</div>
+          <div class="pdet" id="pairDet">—</div>
         </div>
-      </div>
-
-      <div class="db-kpi-grid">
-        <div class="db-kpi">
-          <div id="maLbl" class="db-kpi-label">Mes actual · Abr</div>
-          <div id="maAmt" class="db-kpi-val" style="color:#3fb950;">—</div>
-          <div id="maPct" class="db-kpi-sub" style="color:#3fb950;">—</div>
-        </div>
-        <div class="db-kpi">
-          <div id="mpLbl" class="db-kpi-label">Mes pasado</div>
-          <div id="mpAmt" class="db-kpi-val" style="color:#3fb950;">—</div>
-          <div id="mpPct" class="db-kpi-sub" style="color:#3fb950;">—</div>
-        </div>
-      </div>
-
-      <div class="db-stat-grid">
-        <div class="db-stat">
-          <div class="db-stat-label">Win rate</div>
-          <div id="wr" class="db-stat-val" style="color:#58a6ff;">—</div>
-        </div>
-        <div class="db-stat">
-          <div class="db-stat-label">Trades</div>
-          <div id="tc" class="db-stat-val" style="color:#e6edf3;">—</div>
-        </div>
-        <div class="db-stat">
-          <div class="db-stat-label">Abiertas</div>
-          <div id="oc" class="db-stat-val" style="color:#e6edf3;">—</div>
-        </div>
-      </div>
-
-      <div class="db-section-label">Curva del mes · Abr</div>
-      <div class="db-card">
-        <div class="db-chart-wrap">
-          <canvas id="eqChart"></canvas>
-        </div>
-      </div>
-
-      <div class="db-highlight-grid">
-        <div class="db-hl-pos">
-          <div class="db-kpi-label">Mejor trade</div>
-          <div id="bestVal" style="font-size:17px;font-weight:500;font-family:var(--font-mono);color:#3fb950;">—</div>
-          <div id="bestDate" style="font-size:10px;color:#8b949e;margin-top:2px;">—</div>
-        </div>
-        <div class="db-hl-neg">
-          <div class="db-kpi-label">Peor trade</div>
-          <div id="worstVal" style="font-size:17px;font-weight:500;font-family:var(--font-mono);color:#f85149;">—</div>
-          <div id="worstDate" style="font-size:10px;color:#8b949e;margin-top:2px;">—</div>
-        </div>
-      </div>
-
-    </div>
-
-    <div class="db-right">
-
-      <div class="db-section-label">Control de riesgo</div>
-      <div class="db-card">
-        <div class="db-dd-row">
-          <div class="db-dd-label">
-            <span style="color:#8b949e;">Drawdown diario</span>
-            <span style="font-family:var(--font-mono);color:#e6edf3;"><span id="ddDv">0.00%</span> <span style="color:#484f58;">/ 4%</span></span>
-          </div>
-          <div class="db-bar-track"><div id="ddDb" class="db-bar-fill" style="width:0%;background:#3fb950;"></div></div>
-        </div>
-        <div class="db-dd-row">
-          <div class="db-dd-label">
-            <span style="color:#8b949e;">Drawdown total</span>
-            <span style="font-family:var(--font-mono);color:#e6edf3;"><span id="ddMv">0.00%</span> <span style="color:#484f58;">/ 8%</span></span>
-          </div>
-          <div class="db-bar-track"><div id="ddMb" class="db-bar-fill" style="width:0%;background:#3fb950;"></div></div>
-        </div>
-      </div>
-
-      <div class="db-section-label">Historial mensual</div>
-      <div class="db-card" style="margin-bottom:0;">
-        <div id="histBars"></div>
-      </div>
-
-    </div>
-
-    <div class="db-full" style="margin-top:4px;">
-      <div class="db-section-label">Detalle de operaciones</div>
-      <div style="background:#161b22;border:0.5px solid #21262d;border-radius:10px;overflow:hidden;">
-        <div class="db-table-header">
-          <span style="font-size:10px;color:#484f58;">Par</span>
-          <span style="font-size:10px;color:#484f58;">Dir.</span>
-          <span style="font-size:10px;color:#484f58;">Fecha</span>
-          <span style="font-size:10px;color:#484f58;text-align:right;">PnL</span>
-        </div>
-        <div id="tradeRows"></div>
+        <span id="pairBadge" style="font-size:11px;padding:4px 10px;border-radius:20px;border:0.5px solid;">—</span>
       </div>
     </div>
 
+    <div class="kpi-area">
+      <div class="kpi-grid">
+        <div class="kpi"><div class="kpi-lbl">PnL mes</div><div class="kpi-val" id="kpiMes">—</div><div class="kpi-sub" id="kpiMesPct">—</div></div>
+        <div class="kpi"><div class="kpi-lbl">PnL día</div><div class="kpi-val" id="kpiDia">—</div><div class="kpi-sub" id="kpiDiaPct">—</div></div>
+        <div class="kpi"><div class="kpi-lbl">Balance</div><div class="kpi-val" id="kpiBal">—</div><div class="kpi-sub" id="kpiBalSub">—</div></div>
+        <div class="kpi"><div class="kpi-lbl">Equity</div><div class="kpi-val" id="kpiEq">—</div><div class="kpi-sub" id="kpiEqSub">—</div></div>
+      </div>
+    </div>
+
+    <div class="stats-area">
+      <div class="stat-grid">
+        <div class="stat"><div class="stat-lbl">Win rate</div><div class="stat-val" id="statWR">—</div></div>
+        <div class="stat"><div class="stat-lbl">Mejor trade</div><div class="stat-val" id="statBest" style="color:#3fb950;">—</div></div>
+        <div class="stat"><div class="stat-lbl">Peor trade</div><div class="stat-val" id="statWorst" style="color:#f85149;">—</div></div>
+      </div>
+    </div>
+
+    <div class="gauge-area">
+      <div class="gauge-row">
+        <div class="gauge">
+          <div class="gauge-lbl"><span>Drawdown diario</span><span id="ddDailyPct">0.00%</span></div>
+          <div class="gauge-track"><div class="gauge-fill" id="ddDailyBar" style="width:0%;background:#3fb950;"></div></div>
+          <div style="font-size:10px;color:#484f58;margin-top:4px;">Límite: 4%</div>
+        </div>
+        <div class="gauge">
+          <div class="gauge-lbl"><span>Drawdown total</span><span id="ddTotalPct">0.00%</span></div>
+          <div class="gauge-track"><div class="gauge-fill" id="ddTotalBar" style="width:0%;background:#3fb950;"></div></div>
+          <div style="font-size:10px;color:#484f58;margin-top:4px;">Límite: 8%</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="equity-area">
+      <div style="background:#161b22;border:0.5px solid #21262d;border-radius:10px;padding:10px 14px;">
+        <div class="section-lbl">Curva de equity · mes actual</div>
+        <div class="chart-wrap"><canvas id="equityChart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="history-area">
+      <div style="background:#161b22;border:0.5px solid #21262d;border-radius:10px;padding:10px 14px;height:100%;">
+        <div class="section-lbl">Historial mensual</div>
+        <div class="hist-grid" id="histGrid"></div>
+      </div>
+    </div>
+
+    <div class="trades-area">
+      <div style="background:#161b22;border:0.5px solid #21262d;border-radius:10px;padding:10px 14px;">
+        <div class="section-lbl">Últimas operaciones</div>
+        <table class="trades-table">
+          <thead><tr><th>Fecha</th><th>Tipo</th><th>Lot</th><th>Open</th><th>Close</th><th style="text-align:right;">PnL</th></tr></thead>
+          <tbody id="tradesTbody"></tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </div>
 
 <script>
-const D = {"eurusd": {"par": "EURUSDm", "version": "v1.3.7", "badge": "live", "badgeLabel": "LIVE", "estrategia": "EMA 9/21 · ADX>25 · ATR 1.5x · R:R 1:2 · Risk 0.2%", "rrTarget": 2.0, "capitalActual": 24792.7, "capitalIni": 25000.0, "retornoTotalStr": "-0.83%", "retornoColor": "#f85149", "gananciaTotalStr": "$-207.30", "pnlHoyStr": "$+0.00", "pnlHoyColor": "#3fb950", "winRateStr": "29.8%", "winRateColor": "#e3b341", "tradesTotal": 57, "rrProm": 2.3, "rrColor": "#3fb950", "profitFactor": 0.88, "pfColor": "#f85149", "ddDiario": {"val": "0.00%", "pct": 0.0, "color": "#3fb950"}, "ddMaximo": {"val": "1.74%", "pct": 21.8, "color": "#3fb950"}, "mesActual": {"label": "Abr 2026", "pnlStr": "$-102.34", "pctStr": "-0.41%", "color": "#f85149"}, "mesAnterior": {"label": "Mar 2026", "pnlStr": "$-104.96", "pctStr": "-0.42%", "color": "#f85149"}, "equityLabels": ["2026-03-25", "2026-03-26", "2026-03-26", "2026-03-26", "2026-03-27", "2026-03-27", "2026-03-27", "2026-03-27", "2026-03-27", "2026-03-31", "2026-03-31", "2026-03-31", "2026-03-31", "2026-04-01", "2026-04-01", "2026-04-01", "2026-04-01", "2026-04-01", "2026-04-01", "2026-04-01", "2026-04-02", "2026-04-02", "2026-04-02", "2026-04-02", "2026-04-02", "2026-04-03", "2026-04-05", "2026-04-05", "2026-04-05", "2026-04-05", "2026-04-05", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-07", "2026-04-08", "2026-04-08", "2026-04-08", "2026-04-08", "2026-04-08", "2026-04-08", "2026-04-08", "2026-04-08", "2026-04-09", "2026-04-09", "2026-04-09", "2026-04-09", "2026-04-10", "2026-04-10"], "equityValores": [24983.2, 24784.75, 24618.83, 24697.8, 24775.19, 24690.77, 24601.73, 24674.58, 24764.46, 24861.06, 24828.2, 24787.04, 24895.04, 24859.68, 24969.16, 24935.54, 24896.74, 25006.72, 25006.72, 24958.72, 24938.42, 24905.97, 24905.97, 25009.45, 24975.01, 24986.71, 25077.49, 25075.71, 25071.26, 25111.31, 25031.21, 24944.09, 24857.61, 24802.11, 24880.2, 24850.8, 24777.84, 24751.56, 24729.45, 24702.9, 24674.3, 24754.9, 24866.5, 24866.5, 24866.5, 24822.84, 24927.14, 24886.74, 24858.66, 24817.26, 24939.69, 24894.33, 24894.33, 24859.14, 24819.36, 24792.7, 24792.7], "bestTrade": {"pnlStr": "$+122.43", "fecha": "EURUSDm · 08 Abr"}, "worstTrade": {"pnlStr": "$-198.45", "fecha": "EURUSDm · 26 Mar"}, "history": [{"mes": "Mar 2026", "pnl": -104.96, "pct": -0.42, "total": 13, "ganadores": 6}, {"mes": "Abr 2026", "pnl": -102.34, "pct": -0.41, "total": 44, "ganadores": 11}], "sesiones": [{"sesion": "Sin datos", "total": 57, "wr": 29.8, "pnlStr": "$-207.30", "color": "#f85149"}], "trades": [{"tipo": "Buy", "fecha": "10 Abr", "par": "EURUSDm", "pipsStr": "—", "pnlStr": "—", "color": "#8b949e", "estado": "⏳ Abierto"}, {"tipo": "Buy", "fecha": "10 Abr", "par": "EURUSDm", "pipsStr": "-0.0", "pnlStr": "$+0.00", "color": "#3fb950", "estado": "❌ SL"}, {"tipo": "Buy", "fecha": "10 Abr", "par": "EURUSDm", "pipsStr": "-43.0", "pnlStr": "$-26.66", "color": "#f85149", "estado": "❌ SL"}, {"tipo": "Buy", "fecha": "09 Abr", "par": "EURUSDm", "pipsStr": "-78.0", "pnlStr": "$-39.78", "color": "#f85149", "estado": "❌ SL"}, {"tipo": "Buy", "fecha": "09 Abr", "par": "EURUSDm", "pipsStr": "-69.0", "pnlStr": "$-35.19", "color": "#f85149", "estado": "❌ SL"}, {"tipo": "Buy", "fecha": "09 Abr", "par": "EURUSDm", "pipsStr": "-0.0", "pnlStr": "$+0.00", "color": "#3fb950", "estado": "❌ SL"}, {"tipo": "Buy", "fecha": "09 Abr", "par": "EURUSDm", "pipsStr": "-63.0", "pnlStr": "$-45.36", "color": "#f85149", "estado": "❌ SL"}, {"tipo": "Buy", "fecha": "08 Abr", "par": "EURUSDm", "pipsStr": "+159.0", "pnlStr": "$+122.43", "color": "#3fb950", "estado": "✅ TP"}, {"tipo": "Buy", "fecha": "08 Abr", "par": "EURUSDm", "pipsStr": "-115.0", "pnlStr": "$-41.40", "color": "#f85149", "estado": "❌ SL"}, {"tipo": "Buy", "fecha": "08 Abr", "par": "EURUSDm", "pipsStr": "-72.0", "pnlStr": "$-28.08", "color": "#f85149", "estado": "❌ SL"}, {"tipo": "Buy", "fecha": "08 Abr", "par": "EURUSDm", "pipsStr": "-101.0", "pnlStr": "$-40.40", "color": "#f85149", "estado": "❌ SL"}, {"tipo": "Buy", "fecha": "08 Abr", "par": "EURUSDm", "pipsStr": "+298.0", "pnlStr": "$+104.30", "color": "#3fb950", "estado": "✅ TP"}, {"tipo": "Buy", "fecha": "08 Abr", "par": "EURUSDm", "pipsStr": "-118.0", "pnlStr": "$-43.66", "color": "#f85149", "estado": "❌ SL"}, {"tipo": "Buy", "fecha": "08 Abr", "par": "EURUSDm", "pipsStr": "-0.0", "pnlStr": "$+0.00", "color": "#3fb950", "estado": "❌ SL"}, {"tipo": "Buy", "fecha": "08 Abr", "par": "EURUSDm", "pipsStr": "-0.0", "pnlStr": "$+0.00", "color": "#3fb950", "estado": "❌ SL"}, {"tipo": "Buy", "fecha": "07 Abr", "par": "EURUSDm", "pipsStr": "+310.0", "pnlStr": "$+111.60", "color": "#3fb950", "estado": "✅ TP"}, {"tipo": "Sell", "fecha": "06 Abr", "par": "EURUSDm", "pipsStr": "+155.0", "pnlStr": "$+80.60", "color": "#3fb950", "estado": "✅ TP"}, {"tipo": "Buy", "fecha": "06 Abr", "par": "EURUSDm", "pipsStr": "-55.0", "pnlStr": "$-28.60", "color": "#f85149", "estado": "❌ SL"}, {"tipo": "Buy", "fecha": "06 Abr", "par": "EURUSDm", "pipsStr": "-45.0", "pnlStr": "$-26.55", "color": "#f85149", "estado": "❌ SL"}, {"tipo": "Buy", "fecha": "06 Abr", "par": "EURUSDm", "pipsStr": "-33.0", "pnlStr": "$-22.11", "color": "#f85149", "estado": "❌ SL"}], "mesActualLabel": "Abr", "openCount": 1, "equityMesLabels": ["2026-04-01", "2026-04-01", "2026-04-01", "2026-04-01", "2026-04-01", "2026-04-01", "2026-04-01", "2026-04-02", "2026-04-02", "2026-04-02", "2026-04-02", "2026-04-02", "2026-04-03", "2026-04-05", "2026-04-05", "2026-04-05", "2026-04-05", "2026-04-05", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-07", "2026-04-08", "2026-04-08", "2026-04-08", "2026-04-08", "2026-04-08", "2026-04-08", "2026-04-08", "2026-04-08", "2026-04-09", "2026-04-09", "2026-04-09", "2026-04-09", "2026-04-10", "2026-04-10"], "equityMesValores": [-35.36, 74.12, 40.5, 1.7, 111.68, 111.68, 63.68, 43.38, 10.93, 10.93, 114.41, 79.97, 91.67, 182.45, 180.67, 176.22, 216.27, 136.17, 49.05, -37.43, -92.93, -14.84, -44.24, -117.2, -143.48, -165.59, -192.14, -220.74, -140.14, -28.54, -28.54, -28.54, -72.2, 32.1, -8.3, -36.38, -77.78, 44.65, -0.71, -0.71, -35.9, -75.68, -102.34, -102.34]}, "xauusd": {"par": "XAUUSDm", "version": "v0.1.0", "badge": "staging", "badgeLabel": "STAGING", "estrategia": "EMA 9/21 · RSI zona · ATR 1.5x · R:R 1:3 · Risk 0.2%", "rrTarget": 3.0, "capitalActual": 24836.94, "capitalIni": 25000.0, "retornoTotalStr": "-0.65%", "retornoColor": "#f85149", "gananciaTotalStr": "$-163.06", "pnlHoyStr": "$+0.00", "pnlHoyColor": "#3fb950", "winRateStr": "0.0%", "winRateColor": "#e3b341", "tradesTotal": 15, "rrProm": 0.0, "rrColor": "#f85149", "profitFactor": 0.0, "pfColor": "#f85149", "ddDiario": {"val": "0.00%", "pct": 0.0, "color": "#3fb950"}, "ddMaximo": {"val": "0.60%", "pct": 7.5, "color": "#3fb950"}, "mesActual": {"label": "Abr 2026", "pnlStr": "$-163.06", "pctStr": "-0.65%", "color": "#f85149"}, "mesAnterior": {"label": "Mar 2026", "pnlStr": "$+0.00", "pctStr": "+0.00%", "color": "#3fb950"}, "equityLabels": ["2026-04-08", "2026-04-08", "2026-04-08", "2026-04-08", "2026-04-09", "2026-04-09", "2026-04-09", "2026-04-09", "2026-04-09", "2026-04-09", "2026-04-09", "2026-04-10", "2026-04-10", "2026-04-10", "2026-04-10"], "equityValores": [24986.63, 24984.04, 24978.84, 24978.84, 24973.63, 24952.56, 24946.88, 24941.5, 24936.03, 24931.21, 24911.63, 24906.11, 24883.02, 24875.42, 24836.94], "bestTrade": {"pnlStr": "$+0.00", "fecha": "XAUUSDm · 08 Abr"}, "worstTrade": {"pnlStr": "$-38.48", "fecha": "XAUUSDm · 10 Abr"}, "history": [{"mes": "Abr 2026", "pnl": -163.06, "pct": -0.65, "total": 15, "ganadores": 0}], "sesiones": [{"sesion": "Sin datos", "total": 15, "wr": 0.0, "pnlStr": "$-163.06", "color": "#f85149"}], "trades": [{"tipo": "Buy", "fecha": "10 Abr", "par": "XAUUSDm", "pipsStr": "-9619.0", "pnlStr": "$-38.48", "color": "#f85149", "estado": "❌ SL"}, {"tipo": "Buy", "fecha": "10 Abr", "par": "XAUUSDm", "pipsStr": "-1901.0", "pnlStr": "$-7.60", "color": "#f85149", "estado": "❌ SL"}, {"tipo": "Buy", "fecha": "10 Abr", "par": "XAUUSDm", "pipsStr": "-5771.0", "pnlStr": "$-23.09", "color": "#f85149", "estado": "❌ SL"}, {"tipo": "Buy", "fecha": "10 Abr", "par": "XAUUSDm", "pipsStr": "-1838.0", "pnlStr": "$-5.52", "color": "#f85149", "estado": "❌ SL"}, {"tipo": "Buy", "fecha": "09 Abr", "par": "XAUUSDm", "pipsStr": "-4894.0", "pnlStr": "$-19.58", "color": "#f85149", "estado": "❌ SL"}, {"tipo": "Buy", "fecha": "09 Abr", "par": "XAUUSDm", "pipsStr": "-1606.0", "pnlStr": "$-4.82", "color": "#f85149", "estado": "❌ SL"}, {"tipo": "Buy", "fecha": "09 Abr", "par": "XAUUSDm", "pipsStr": "-1823.0", "pnlStr": "$-5.47", "color": "#f85149", "estado": "❌ SL"}, {"tipo": "Buy", "fecha": "09 Abr", "par": "XAUUSDm", "pipsStr": "-1793.0", "pnlStr": "$-5.38", "color": "#f85149", "estado": "❌ SL"}, {"tipo": "Buy", "fecha": "09 Abr", "par": "XAUUSDm", "pipsStr": "-1893.0", "pnlStr": "$-5.68", "color": "#f85149", "estado": "❌ SL"}, {"tipo": "Buy", "fecha": "09 Abr", "par": "XAUUSDm", "pipsStr": "-7026.0", "pnlStr": "$-21.07", "color": "#f85149", "estado": "❌ SL"}, {"tipo": "Buy", "fecha": "09 Abr", "par": "XAUUSDm", "pipsStr": "-1737.0", "pnlStr": "$-5.21", "color": "#f85149", "estado": "❌ SL"}, {"tipo": "Buy", "fecha": "08 Abr", "par": "XAUUSDm", "pipsStr": "+0.0", "pnlStr": "$+0.00", "color": "#3fb950", "estado": "❌ SL"}, {"tipo": "Buy", "fecha": "08 Abr", "par": "XAUUSDm", "pipsStr": "-1732.0", "pnlStr": "$-5.20", "color": "#f85149", "estado": "❌ SL"}, {"tipo": "Buy", "fecha": "08 Abr", "par": "XAUUSDm", "pipsStr": "-863.0", "pnlStr": "$-2.59", "color": "#f85149", "estado": "❌ SL"}, {"tipo": "Buy", "fecha": "08 Abr", "par": "XAUUSDm", "pipsStr": "-4456.0", "pnlStr": "$-13.37", "color": "#f85149", "estado": "❌ SL"}], "mesActualLabel": "Abr", "openCount": 0, "equityMesLabels": ["2026-04-08", "2026-04-08", "2026-04-08", "2026-04-08", "2026-04-09", "2026-04-09", "2026-04-09", "2026-04-09", "2026-04-09", "2026-04-09", "2026-04-09", "2026-04-10", "2026-04-10", "2026-04-10", "2026-04-10"], "equityMesValores": [-13.37, -15.96, -21.16, -21.16, -26.37, -47.44, -53.12, -58.5, -63.97, -68.79, -88.37, -93.89, -116.98, -124.58, -163.06]}};
-let chart = null;
+const D = {"eurusd": {"par": "EURUSDm", "version": "v1.3.7", "badge": "live", "badgeLabel": "LIVE", "estrategia": "EMA 9/21 · ADX>25 · ATR 1.5x · R:R 1:2 · Risk 0.2%", "rrTarget": 2.0, "capitalActual": 24792.7, "capitalIni": 25000.0, "retornoTotalStr": "-0.83%", "retornoColor": "#f85149", "gananciaTotalStr": "$-207.30", "pnlHoyStr": "$+0.00", "pnlHoyColor": "#3fb950", "winRateStr": "29.8%", "winRateColor": "#e3b341", "tradesTotal": 57, "rrProm": 2.3, "rrColor": "#3fb950", "profitFactor": 0.88, "pfColor": "#f85149", "ddDiario": {"val": "0.00%", "pct": 0.0, "color": "#3fb950"}, "ddMaximo": {"val": "1.74%", "pct": 21.8, "color": "#3fb950"}, "mesActual": {"label": "Abr 2026", "pnlStr": "$-102.34", "pctStr": "-0.41%", "color": "#f85149"}, "mesAnterior": {"label": "Mar 2026", "pnlStr": "$-104.96", "pctStr": "-0.42%", "color": "#f85149"}, "equityLabels": ["2026-03-25", "2026-03-26", "2026-03-26", "2026-03-26", "2026-03-27", "2026-03-27", "2026-03-27", "2026-03-27", "2026-03-27", "2026-03-31", "2026-03-31", "2026-03-31", "2026-03-31", "2026-04-01", "2026-04-01", "2026-04-01", "2026-04-01", "2026-04-01", "2026-04-01", "2026-04-01", "2026-04-02", "2026-04-02", "2026-04-02", "2026-04-02", "2026-04-02", "2026-04-03", "2026-04-05", "2026-04-05", "2026-04-05", "2026-04-05", "2026-04-05", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-07", "2026-04-08", "2026-04-08", "2026-04-08", "2026-04-08", "2026-04-08", "2026-04-08", "2026-04-08", "2026-04-08", "2026-04-09", "2026-04-09", "2026-04-09", "2026-04-09", "2026-04-10", "2026-04-10"], "equityValores": [24983.2, 24784.75, 24618.83, 24697.8, 24775.19, 24690.77, 24601.73, 24674.58, 24764.46, 24861.06, 24828.2, 24787.04, 24895.04, 24859.68, 24969.16, 24935.54, 24896.74, 25006.72, 25006.72, 24958.72, 24938.42, 24905.97, 24905.97, 25009.45, 24975.01, 24986.71, 25077.49, 25075.71, 25071.26, 25111.31, 25031.21, 24944.09, 24857.61, 24802.11, 24880.2, 24850.8, 24777.84, 24751.56, 24729.45, 24702.9, 24674.3, 24754.9, 24866.5, 24866.5, 24866.5, 24822.84, 24927.14, 24886.74, 24858.66, 24817.26, 24939.69, 24894.33, 24894.33, 24859.14, 24819.36, 24792.7, 24792.7], "bestTrade": {"pnlStr": "$+122.43", "fecha": "EURUSDm · 08 Abr"}, "worstTrade": {"pnlStr": "$-198.45", "fecha": "EURUSDm · 26 Mar"}, "history": [{"mes": "Mar 2026", "pnl": -104.96, "pct": -0.42, "total": 13, "ganadores": 6}, {"mes": "Abr 2026", "pnl": -102.34, "pct": -0.41, "total": 44, "ganadores": 11}], "sesiones": [{"sesion": "Sin datos", "total": 57, "wr": 29.8, "pnlStr": "$-207.30", "color": "#f85149"}], "trades": [{"tipo": "Buy", "fecha": "10 Abr", "par": "EURUSDm", "pipsStr": "—", "pnlStr": "—", "color": "#8b949e", "estado": "⏳ Abierto", "lot": "0.52", "open": "—", "close": "—"}, {"tipo": "Buy", "fecha": "10 Abr", "par": "EURUSDm", "pipsStr": "-0.0", "pnlStr": "$+0.00", "color": "#3fb950", "estado": "❌ SL", "lot": "0.53", "open": "—", "close": "1.17275"}, {"tipo": "Buy", "fecha": "10 Abr", "par": "EURUSDm", "pipsStr": "-43.0", "pnlStr": "$-26.66", "color": "#f85149", "estado": "❌ SL", "lot": "0.62", "open": "—", "close": "1.17098"}, {"tipo": "Buy", "fecha": "09 Abr", "par": "EURUSDm", "pipsStr": "-78.0", "pnlStr": "$-39.78", "color": "#f85149", "estado": "❌ SL", "lot": "0.51", "open": "—", "close": "1.16942"}, {"tipo": "Buy", "fecha": "09 Abr", "par": "EURUSDm", "pipsStr": "-69.0", "pnlStr": "$-35.19", "color": "#f85149", "estado": "❌ SL", "lot": "0.51", "open": "—", "close": "1.17013"}, {"tipo": "Buy", "fecha": "09 Abr", "par": "EURUSDm", "pipsStr": "-0.0", "pnlStr": "$+0.00", "color": "#3fb950", "estado": "❌ SL", "lot": "0.49", "open": "—", "close": "1.17120"}, {"tipo": "Buy", "fecha": "09 Abr", "par": "EURUSDm", "pipsStr": "-63.0", "pnlStr": "$-45.36", "color": "#f85149", "estado": "❌ SL", "lot": "0.72", "open": "—", "close": "1.16807"}, {"tipo": "Buy", "fecha": "08 Abr", "par": "EURUSDm", "pipsStr": "+159.0", "pnlStr": "$+122.43", "color": "#3fb950", "estado": "✅ TP", "lot": "0.77", "open": "—", "close": "1.16680"}, {"tipo": "Buy", "fecha": "08 Abr", "par": "EURUSDm", "pipsStr": "-115.0", "pnlStr": "$-41.40", "color": "#f85149", "estado": "❌ SL", "lot": "0.36", "open": "—", "close": "1.16863"}, {"tipo": "Buy", "fecha": "08 Abr", "par": "EURUSDm", "pipsStr": "-72.0", "pnlStr": "$-28.08", "color": "#f85149", "estado": "❌ SL", "lot": "0.39", "open": "—", "close": "1.16942"}, {"tipo": "Buy", "fecha": "08 Abr", "par": "EURUSDm", "pipsStr": "-101.0", "pnlStr": "$-40.40", "color": "#f85149", "estado": "❌ SL", "lot": "0.40", "open": "—", "close": "1.16931"}, {"tipo": "Buy", "fecha": "08 Abr", "par": "EURUSDm", "pipsStr": "+298.0", "pnlStr": "$+104.30", "color": "#3fb950", "estado": "✅ TP", "lot": "0.35", "open": "—", "close": "1.17091"}, {"tipo": "Buy", "fecha": "08 Abr", "par": "EURUSDm", "pipsStr": "-118.0", "pnlStr": "$-43.66", "color": "#f85149", "estado": "❌ SL", "lot": "0.37", "open": "—", "close": "1.16730"}, {"tipo": "Buy", "fecha": "08 Abr", "par": "EURUSDm", "pipsStr": "-0.0", "pnlStr": "$+0.00", "color": "#3fb950", "estado": "❌ SL", "lot": "0.37", "open": "—", "close": "1.16831"}, {"tipo": "Buy", "fecha": "08 Abr", "par": "EURUSDm", "pipsStr": "-0.0", "pnlStr": "$+0.00", "color": "#3fb950", "estado": "❌ SL", "lot": "0.43", "open": "—", "close": "1.16885"}, {"tipo": "Buy", "fecha": "07 Abr", "par": "EURUSDm", "pipsStr": "+310.0", "pnlStr": "$+111.60", "color": "#3fb950", "estado": "✅ TP", "lot": "0.36", "open": "—", "close": "1.17033"}, {"tipo": "Sell", "fecha": "06 Abr", "par": "EURUSDm", "pipsStr": "+155.0", "pnlStr": "$+80.60", "color": "#3fb950", "estado": "✅ TP", "lot": "0.52", "open": "—", "close": "1.15257"}, {"tipo": "Buy", "fecha": "06 Abr", "par": "EURUSDm", "pipsStr": "-55.0", "pnlStr": "$-28.60", "color": "#f85149", "estado": "❌ SL", "lot": "0.52", "open": "—", "close": "1.15366"}, {"tipo": "Buy", "fecha": "06 Abr", "par": "EURUSDm", "pipsStr": "-45.0", "pnlStr": "$-26.55", "color": "#f85149", "estado": "❌ SL", "lot": "0.59", "open": "—", "close": "1.15496"}, {"tipo": "Buy", "fecha": "06 Abr", "par": "EURUSDm", "pipsStr": "-33.0", "pnlStr": "$-22.11", "color": "#f85149", "estado": "❌ SL", "lot": "0.67", "open": "—", "close": "1.15613"}], "mesActualLabel": "Abr", "openCount": 1, "equityMesLabels": ["2026-04-01", "2026-04-01", "2026-04-01", "2026-04-01", "2026-04-01", "2026-04-01", "2026-04-01", "2026-04-02", "2026-04-02", "2026-04-02", "2026-04-02", "2026-04-02", "2026-04-03", "2026-04-05", "2026-04-05", "2026-04-05", "2026-04-05", "2026-04-05", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-06", "2026-04-07", "2026-04-08", "2026-04-08", "2026-04-08", "2026-04-08", "2026-04-08", "2026-04-08", "2026-04-08", "2026-04-08", "2026-04-09", "2026-04-09", "2026-04-09", "2026-04-09", "2026-04-10", "2026-04-10"], "equityMesValores": [-35.36, 74.12, 40.5, 1.7, 111.68, 111.68, 63.68, 43.38, 10.93, 10.93, 114.41, 79.97, 91.67, 182.45, 180.67, 176.22, 216.27, 136.17, 49.05, -37.43, -92.93, -14.84, -44.24, -117.2, -143.48, -165.59, -192.14, -220.74, -140.14, -28.54, -28.54, -28.54, -72.2, 32.1, -8.3, -36.38, -77.78, 44.65, -0.71, -0.71, -35.9, -75.68, -102.34, -102.34], "capitalStr": "$24,792.70", "capitalIniStr": "inicial $25,000.00", "capitalPnlStr": "$102 este mes", "capitalPnlColor": "#f85149", "capitalPnlBg": "rgba(248,81,73,0.12)", "pnlDiaStr": "$+0.00", "pnlDiaPct": "+0.00%", "pnlDiaColor": "#3fb950", "equityStr": "$24,792.70", "equitySub": "1 op. abiertas", "bestTradeVal": "$+122.43", "worstTradeVal": "$-198.45"}, "xauusd": {"par": "XAUUSDm", "version": "v0.1.0", "badge": "staging", "badgeLabel": "STAGING", "estrategia": "EMA 9/21 · RSI zona · ATR 1.5x · R:R 1:3 · Risk 0.2%", "rrTarget": 3.0, "capitalActual": 24836.94, "capitalIni": 25000.0, "retornoTotalStr": "-0.65%", "retornoColor": "#f85149", "gananciaTotalStr": "$-163.06", "pnlHoyStr": "$+0.00", "pnlHoyColor": "#3fb950", "winRateStr": "0.0%", "winRateColor": "#e3b341", "tradesTotal": 15, "rrProm": 0.0, "rrColor": "#f85149", "profitFactor": 0.0, "pfColor": "#f85149", "ddDiario": {"val": "0.00%", "pct": 0.0, "color": "#3fb950"}, "ddMaximo": {"val": "0.60%", "pct": 7.5, "color": "#3fb950"}, "mesActual": {"label": "Abr 2026", "pnlStr": "$-163.06", "pctStr": "-0.65%", "color": "#f85149"}, "mesAnterior": {"label": "Mar 2026", "pnlStr": "$+0.00", "pctStr": "+0.00%", "color": "#3fb950"}, "equityLabels": ["2026-04-08", "2026-04-08", "2026-04-08", "2026-04-08", "2026-04-09", "2026-04-09", "2026-04-09", "2026-04-09", "2026-04-09", "2026-04-09", "2026-04-09", "2026-04-10", "2026-04-10", "2026-04-10", "2026-04-10"], "equityValores": [24986.63, 24984.04, 24978.84, 24978.84, 24973.63, 24952.56, 24946.88, 24941.5, 24936.03, 24931.21, 24911.63, 24906.11, 24883.02, 24875.42, 24836.94], "bestTrade": {"pnlStr": "$+0.00", "fecha": "XAUUSDm · 08 Abr"}, "worstTrade": {"pnlStr": "$-38.48", "fecha": "XAUUSDm · 10 Abr"}, "history": [{"mes": "Abr 2026", "pnl": -163.06, "pct": -0.65, "total": 15, "ganadores": 0}], "sesiones": [{"sesion": "Sin datos", "total": 15, "wr": 0.0, "pnlStr": "$-163.06", "color": "#f85149"}], "trades": [{"tipo": "Buy", "fecha": "10 Abr", "par": "XAUUSDm", "pipsStr": "-9619.0", "pnlStr": "$-38.48", "color": "#f85149", "estado": "❌ SL", "lot": "0.04", "open": "—", "close": "4772.10"}, {"tipo": "Buy", "fecha": "10 Abr", "par": "XAUUSDm", "pipsStr": "-1901.0", "pnlStr": "$-7.60", "color": "#f85149", "estado": "❌ SL", "lot": "0.04", "open": "—", "close": "4756.67"}, {"tipo": "Buy", "fecha": "10 Abr", "par": "XAUUSDm", "pipsStr": "-5771.0", "pnlStr": "$-23.09", "color": "#f85149", "estado": "❌ SL", "lot": "0.04", "open": "—", "close": "4752.16"}, {"tipo": "Buy", "fecha": "10 Abr", "par": "XAUUSDm", "pipsStr": "-1838.0", "pnlStr": "$-5.52", "color": "#f85149", "estado": "❌ SL", "lot": "0.03", "open": "—", "close": "4764.24"}, {"tipo": "Buy", "fecha": "09 Abr", "par": "XAUUSDm", "pipsStr": "-4894.0", "pnlStr": "$-19.58", "color": "#f85149", "estado": "❌ SL", "lot": "0.04", "open": "—", "close": "4769.49"}, {"tipo": "Buy", "fecha": "09 Abr", "par": "XAUUSDm", "pipsStr": "-1606.0", "pnlStr": "$-4.82", "color": "#f85149", "estado": "❌ SL", "lot": "0.03", "open": "—", "close": "4776.70"}, {"tipo": "Buy", "fecha": "09 Abr", "par": "XAUUSDm", "pipsStr": "-1823.0", "pnlStr": "$-5.47", "color": "#f85149", "estado": "❌ SL", "lot": "0.03", "open": "—", "close": "4720.20"}, {"tipo": "Buy", "fecha": "09 Abr", "par": "XAUUSDm", "pipsStr": "-1793.0", "pnlStr": "$-5.38", "color": "#f85149", "estado": "❌ SL", "lot": "0.03", "open": "—", "close": "4720.98"}, {"tipo": "Buy", "fecha": "09 Abr", "par": "XAUUSDm", "pipsStr": "-1893.0", "pnlStr": "$-5.68", "color": "#f85149", "estado": "❌ SL", "lot": "0.03", "open": "—", "close": "4721.21"}, {"tipo": "Buy", "fecha": "09 Abr", "par": "XAUUSDm", "pipsStr": "-7026.0", "pnlStr": "$-21.07", "color": "#f85149", "estado": "❌ SL", "lot": "0.03", "open": "—", "close": "4712.80"}, {"tipo": "Buy", "fecha": "09 Abr", "par": "XAUUSDm", "pipsStr": "-1737.0", "pnlStr": "$-5.21", "color": "#f85149", "estado": "❌ SL", "lot": "0.03", "open": "—", "close": "4711.65"}, {"tipo": "Buy", "fecha": "08 Abr", "par": "XAUUSDm", "pipsStr": "+0.0", "pnlStr": "$+0.00", "color": "#3fb950", "estado": "❌ SL", "lot": "0.02", "open": "—", "close": "4718.39"}, {"tipo": "Buy", "fecha": "08 Abr", "par": "XAUUSDm", "pipsStr": "-1732.0", "pnlStr": "$-5.20", "color": "#f85149", "estado": "❌ SL", "lot": "0.03", "open": "—", "close": "4715.77"}, {"tipo": "Buy", "fecha": "08 Abr", "par": "XAUUSDm", "pipsStr": "-863.0", "pnlStr": "$-2.59", "color": "#f85149", "estado": "❌ SL", "lot": "0.03", "open": "—", "close": "4712.44"}, {"tipo": "Buy", "fecha": "08 Abr", "par": "XAUUSDm", "pipsStr": "-4456.0", "pnlStr": "$-13.37", "color": "#f85149", "estado": "❌ SL", "lot": "0.03", "open": "—", "close": "4707.06"}], "mesActualLabel": "Abr", "openCount": 0, "equityMesLabels": ["2026-04-08", "2026-04-08", "2026-04-08", "2026-04-08", "2026-04-09", "2026-04-09", "2026-04-09", "2026-04-09", "2026-04-09", "2026-04-09", "2026-04-09", "2026-04-10", "2026-04-10", "2026-04-10", "2026-04-10"], "equityMesValores": [-13.37, -15.96, -21.16, -21.16, -26.37, -47.44, -53.12, -58.5, -63.97, -68.79, -88.37, -93.89, -116.98, -124.58, -163.06], "capitalStr": "$24,836.94", "capitalIniStr": "inicial $25,000.00", "capitalPnlStr": "$163 este mes", "capitalPnlColor": "#f85149", "capitalPnlBg": "rgba(248,81,73,0.12)", "pnlDiaStr": "$+0.00", "pnlDiaPct": "+0.00%", "pnlDiaColor": "#3fb950", "equityStr": "$24,836.94", "equitySub": "sin flotante", "bestTradeVal": "$+0.00", "worstTradeVal": "$-38.48"}};
+let equityChart = null;
 
-function set(id, txt, color) {
+function set(id, txt, color, bg) {
   const el = document.getElementById(id);
   if (!el) return;
-  el.textContent = txt;
+  if (txt !== undefined) el.textContent = txt;
   if (color !== undefined) el.style.color = color;
+  if (bg !== undefined) el.style.background = bg;
 }
 
 function renderHistory(h) {
-  const max = Math.max(...h.map(x => Math.abs(x.pnl)), 1);
-  document.getElementById('histBars').innerHTML = h.map(x => {
-    const pos = x.pnl >= 0, col = pos ? '#3fb950' : '#f85149';
-    const pct = Math.round(Math.abs(x.pnl) / max * 100);
-    const ps  = (pos ? '+' : '-') + '$' + Math.abs(x.pnl).toFixed(0);
-    const pp  = (pos ? '+' : '') + x.pct.toFixed(1) + '%';
+  const maxAbs = Math.max(...h.map(x => Math.abs(x.pct)), 0.01);
+  document.getElementById('histGrid').innerHTML = h.map(x => {
+    const w = (Math.abs(x.pct) / maxAbs * 100).toFixed(1);
+    const c = x.pnl >= 0 ? '#3fb950' : '#f85149';
+    const ps = (x.pnl >= 0 ? '+' : '-') + '$' + Math.abs(x.pnl).toFixed(0);
+    const pp = (x.pct >= 0 ? '+' : '') + x.pct.toFixed(1) + '%';
     const lbl = x.mes.split(' ')[0];
-    return `<div style="display:grid;grid-template-columns:32px 1fr 56px;align-items:center;gap:8px;margin-bottom:8px;">
-      <span style="font-size:10px;color:#8b949e;font-family:var(--font-mono);">${lbl}</span>
-      <div style="display:flex;align-items:center;gap:6px;">
-        <div style="background:#21262d;border-radius:3px;height:6px;flex:1;overflow:hidden;">
-          <div style="width:${pct}%;height:100%;background:${col};border-radius:3px;"></div>
-        </div>
-        <span style="font-size:10px;color:${col};font-family:var(--font-mono);min-width:38px;">${pp}</span>
-      </div>
-      <span style="font-size:10px;color:${col};font-family:var(--font-mono);text-align:right;">${ps}</span>
+    return `<div class="hist-row">
+      <span style="color:#8b949e;">${lbl}</span>
+      <div class="hist-bar-bg"><div class="hist-bar-fill" style="width:${w}%;background:${c};"></div></div>
+      <span style="color:${c};text-align:right;">${pp}</span>
+      <span style="color:#8b949e;text-align:right;">${ps}</span>
     </div>`;
   }).join('');
 }
 
 function renderTrades(trades) {
-  document.getElementById('tradeRows').innerHTML = trades.map(t => {
-    const dc = t.tipo === 'Buy' ? '#58a6ff' : '#f0883e';
-    return `<div class="db-table-row">
-      <span style="color:#e6edf3;font-family:var(--font-mono);">${t.par}</span>
-      <span style="color:${dc}">${t.tipo}</span>
-      <span style="color:#8b949e;">${t.fecha}</span>
-      <span style="color:${t.color};font-family:var(--font-mono);font-weight:500;text-align:right;">${t.pnlStr}</span>
-    </div>`;
-  }).join('');
+  document.getElementById('tradesTbody').innerHTML = trades.map(t =>
+    `<tr>
+      <td>${t.fecha}</td>
+      <td style="color:${t.tipo==='Buy'?'#3fb950':'#f85149'}">${t.tipo}</td>
+      <td>${t.lot}</td>
+      <td>${t.open}</td>
+      <td>${t.close}</td>
+      <td style="text-align:right;color:${t.color}">${t.pnlStr}</td>
+    </tr>`
+  ).join('');
+}
+
+function renderEquity(vals, lbls) {
+  if (equityChart) { equityChart.destroy(); equityChart = null; }
+  if (!vals.length) vals = [0];
+  if (!lbls.length) lbls = [''];
+  equityChart = new Chart(document.getElementById('equityChart'), {
+    type: 'line',
+    data: {
+      labels: lbls,
+      datasets: [{ data: vals, borderColor: '#3fb950', borderWidth: 1.5,
+        pointRadius: 0, pointHitRadius: 8, fill: true,
+        backgroundColor: (ctx) => {
+          const g = ctx.chart.ctx.createLinearGradient(0, 0, 0, 130);
+          g.addColorStop(0, 'rgba(63,185,80,0.15)');
+          g.addColorStop(1, 'rgba(63,185,80,0)');
+          return g;
+        }, tension: 0.4 }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false },
+        tooltip: { backgroundColor: '#161b22', borderColor: '#30363d', borderWidth: 1,
+          titleColor: '#8b949e', bodyColor: '#3fb950',
+          callbacks: { label: v => '$' + v.raw.toLocaleString('en-US', { minimumFractionDigits: 2 }) } } },
+      scales: {
+        x: { grid: { color: 'rgba(48,54,61,0.4)' }, ticks: { color: '#484f58', font: { size: 9 }, maxTicksLimit: 8 } },
+        y: { grid: { color: 'rgba(48,54,61,0.4)' }, ticks: { color: '#484f58', font: { size: 9 },
+          callback: v => '$' + v.toLocaleString('en-US') },
+          min: vals.length > 1 ? Math.min(...vals) - Math.abs(Math.min(...vals)) * 0.05 : undefined } }
+    }
+  });
 }
 
 function switchPair(id) {
   const d = D[id];
-  document.querySelectorAll('.db-btn').forEach(b => b.classList.toggle('active', b.dataset.pair === id));
+  document.getElementById('btnEURUSD').className = 'pb' + (id === 'eurusd' ? ' on' : '');
+  document.getElementById('btnXAUUSD').className = 'pb' + (id === 'xauusd' ? ' on' : '');
   const badge = document.getElementById('pair-badge');
   badge.className = d.badge === 'live' ? 'badge-live' : 'badge-staging';
   badge.textContent = '● ' + d.badgeLabel;
-  set('pairName',   d.par);
-  set('pairDetail', d.estrategia);
-  set('maLbl', 'Mes actual · ' + d.mesActualLabel);
-  set('maAmt', d.mesActual.pnlStr,    d.mesActual.color);
-  set('maPct', d.mesActual.pctStr,    d.mesActual.color);
-  set('mpLbl', 'Mes pasado · ' + d.mesAnterior.label.split(' ')[0]);
-  set('mpAmt', d.mesAnterior.pnlStr,  d.mesAnterior.color);
-  set('mpPct', d.mesAnterior.pctStr,  d.mesAnterior.color);
-  set('wr', d.winRateStr,      d.winRateColor);
-  set('tc', String(d.tradesTotal));
-  set('oc', String(d.openCount));
-  set('ddDv', d.ddDiario.val,  d.ddDiario.color);
-  const db = document.getElementById('ddDb');
+  // Capital banner
+  set('capValue',   d.capitalStr);
+  set('capPnl',     d.capitalPnlStr, d.capitalPnlColor, d.capitalPnlBg);
+  set('capInitial', d.capitalIniStr);
+  // Pair card
+  set('pairName', d.par);
+  set('pairDet',  d.estrategia);
+  const pb = document.getElementById('pairBadge');
+  pb.textContent = d.badge === 'live' ? 'En vivo' : 'Demo';
+  pb.style.color = d.badge === 'live' ? '#3fb950' : '#e3b341';
+  pb.style.background = d.badge === 'live' ? 'rgba(63,185,80,0.12)' : 'rgba(227,179,65,0.12)';
+  pb.style.borderColor = d.badge === 'live' ? 'rgba(63,185,80,0.25)' : 'rgba(227,179,65,0.25)';
+  // KPIs
+  set('kpiMes',    d.mesActual.pnlStr,  d.mesActual.color);
+  set('kpiMesPct', d.mesActual.pctStr,  d.mesActual.color);
+  set('kpiDia',    d.pnlDiaStr,         d.pnlDiaColor);
+  set('kpiDiaPct', d.pnlDiaPct,         d.pnlDiaColor);
+  set('kpiBal',    d.capitalStr);
+  set('kpiBalSub', d.capitalIniStr);
+  set('kpiEq',     d.equityStr);
+  set('kpiEqSub',  d.equitySub);
+  // Stats
+  set('statWR',    d.winRateStr,   d.winRateColor);
+  set('statBest',  d.bestTradeVal);
+  set('statWorst', d.worstTradeVal);
+  // Drawdown
+  set('ddDailyPct', d.ddDiario.val, d.ddDiario.color);
+  const db = document.getElementById('ddDailyBar');
   db.style.width = d.ddDiario.pct + '%'; db.style.background = d.ddDiario.color;
-  set('ddMv', d.ddMaximo.val,  d.ddMaximo.color);
-  const mb = document.getElementById('ddMb');
+  set('ddTotalPct', d.ddMaximo.val, d.ddMaximo.color);
+  const mb = document.getElementById('ddTotalBar');
   mb.style.width = d.ddMaximo.pct + '%'; mb.style.background = d.ddMaximo.color;
-  set('bestVal',   d.bestTrade.pnlStr);
-  set('bestDate',  d.bestTrade.fecha);
-  set('worstVal',  d.worstTrade.pnlStr);
-  set('worstDate', d.worstTrade.fecha);
-  if (chart) {
-    const vals = d.equityMesValores.length ? d.equityMesValores : [0];
-    const lbls = d.equityMesLabels.length  ? d.equityMesLabels  : [''];
-    chart.data.labels = lbls;
-    chart.data.datasets[0].data = vals;
-    chart.update('none');
-  }
+  // Chart + history + trades
+  renderEquity(d.equityMesValores, d.equityMesLabels);
   renderHistory(d.history);
   renderTrades(d.trades);
 }
-
-const ctx = document.getElementById('eqChart').getContext('2d');
-chart = new Chart(ctx, {
-  type: 'line',
-  data: {
-    labels: D.eurusd.equityMesLabels.length ? D.eurusd.equityMesLabels : [''],
-    datasets: [{
-      data: D.eurusd.equityMesValores.length ? D.eurusd.equityMesValores : [0],
-      borderColor: '#3fb950',
-      borderWidth: 1.5,
-      pointRadius: 2,
-      pointBackgroundColor: '#3fb950',
-      fill: true,
-      backgroundColor: (c) => {
-        const g = c.chart.ctx.createLinearGradient(0, 0, 0, 160);
-        g.addColorStop(0, 'rgba(63,185,80,0.18)');
-        g.addColorStop(1, 'rgba(63,185,80,0)');
-        return g;
-      },
-      tension: 0.4
-    }]
-  },
-  options: {
-    responsive: true, maintainAspectRatio: false,
-    plugins: {
-      legend: { display: false },
-      tooltip: {
-        backgroundColor: '#161b22', borderColor: '#21262d', borderWidth: 1,
-        titleColor: '#8b949e', bodyColor: '#3fb950',
-        callbacks: { label: v => '$' + v.raw.toLocaleString('en-US', { minimumFractionDigits: 2 }) }
-      }
-    },
-    scales: {
-      x: { grid: { color: 'rgba(48,54,61,0.5)' }, ticks: { color: '#484f58', font: { size: 10 }, maxTicksLimit: 8 } },
-      y: { grid: { color: 'rgba(48,54,61,0.5)' }, ticks: { color: '#484f58', font: { size: 10 }, callback: v => '$' + v } }
-    }
-  }
-});
 
 switchPair('eurusd');
 </script>
