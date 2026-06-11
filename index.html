@@ -8,6 +8,7 @@
 <meta http-equiv="Expires" content="0">
 <title>Trading Dashboard</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://unpkg.com/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root { --font-sans:'Segoe UI',system-ui,sans-serif; --font-mono:'SFMono-Regular',Consolas,'Liberation Mono',monospace; }
@@ -52,6 +53,9 @@ body { background:#0d1117; color:#e6edf3; font-family:var(--font-sans); font-siz
 .gauge-fill { height:100%; border-radius:3px; transition:width 0.4s; }
 .section-lbl { font-size:10px; color:#8b949e; letter-spacing:0.5px; text-transform:uppercase; margin-bottom:6px; }
 .chart-wrap { position:relative; height:130px; width:100%; }
+.price-charts-container { display:grid; grid-template-columns:1fr; gap:10px; }
+.price-chart-wrap { height:240px; width:100%; }
+@media(min-width:700px) { .price-charts-container { grid-template-columns:1fr 1fr; } }
 .hist-grid { display:grid; gap:5px; }
 .hist-row { display:grid; grid-template-columns:40px 1fr 44px 54px; align-items:center; gap:8px; font-size:11px; }
 .hist-bar-bg { background:#21262d; border-radius:2px; height:6px; }
@@ -60,13 +64,13 @@ body { background:#0d1117; color:#e6edf3; font-family:var(--font-sans); font-siz
 .trades-table th { text-align:left; color:#8b949e; font-weight:400; padding:4px 0; border-bottom:0.5px solid #21262d; }
 .trades-table td { padding:5px 0; border-bottom:0.5px solid #161b22; color:#c9d1d9; }
 @media(min-width:700px) {
-  .db-body { grid-template-columns:1fr 1fr; grid-template-areas:"pair pair" "kpi kpi" "stats stats" "gauges gauges" "equity history" "trades trades"; }
+  .db-body { grid-template-columns:1fr 1fr; grid-template-areas:"pair pair" "kpi kpi" "stats stats" "gauges gauges" "equity history" "trades trades" "pcharts pcharts"; }
   .pair-area  { grid-area:pair;    } .kpi-area    { grid-area:kpi;    } .stats-area { grid-area:stats;  }
-  .gauge-area { grid-area:gauges;  } .equity-area { grid-area:equity; } .history-area { grid-area:history; } .trades-area { grid-area:trades; }
+  .gauge-area { grid-area:gauges;  } .equity-area { grid-area:equity; } .history-area { grid-area:history; } .trades-area { grid-area:trades; } .pcharts-area { grid-area:pcharts; }
   .kpi-grid { grid-template-columns:repeat(4,1fr); }
 }
 @media(min-width:1000px) {
-  .db-body { grid-template-columns:1fr 1fr 1fr; grid-template-areas:"pair pair pair" "kpi kpi kpi" "stats gauges gauges" "equity equity history" "trades trades trades"; }
+  .db-body { grid-template-columns:1fr 1fr 1fr; grid-template-areas:"pair pair pair" "kpi kpi kpi" "stats gauges gauges" "equity equity history" "trades trades trades" "pcharts pcharts pcharts"; }
 }
 </style>
 </head>
@@ -158,6 +162,21 @@ body { background:#0d1117; color:#e6edf3; font-family:var(--font-sans); font-siz
           <thead><tr><th>Fecha</th><th>Tipo</th><th>Lot</th><th>Open</th><th>Close</th><th style="text-align:right;">PnL</th></tr></thead>
           <tbody id="tradesTbody"></tbody>
         </table>
+      </div>
+    </div>
+
+    <div class="pcharts-area">
+      <div style="background:#161b22;border:0.5px solid #21262d;border-radius:10px;padding:10px 14px;">
+        <div class="price-charts-container">
+          <div>
+            <div class="section-lbl">Tendencia · H4 · <span style="color:#58a6ff;">EMA 9</span> / <span style="color:#e3b341;">EMA 21</span></div>
+            <div id="chartH4" class="price-chart-wrap"></div>
+          </div>
+          <div>
+            <div class="section-lbl">Operativo · M15 · <span style="color:#58a6ff;">EMA 9</span> / <span style="color:#e3b341;">EMA 21</span></div>
+            <div id="chartM15" class="price-chart-wrap"></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -311,10 +330,78 @@ function _render() {
   renderTrades(d.trades);
 }
 
-function switchPair(p) { currentPair = p; _render(); }
+function switchPair(p) { currentPair = p; _render(); renderPriceCharts(p); }
 function switchMode(m) { currentMode = m; _render(); }
 
+// ── Price charts (TradingView Lightweight Charts) ──
+let _chartH4 = null, _chartM15 = null;
+let _csH4 = null, _ema9H4 = null, _ema21H4 = null;
+let _csM15 = null, _ema9M15 = null, _ema21M15 = null;
+
+function _makeChart(containerId) {
+  const el = document.getElementById(containerId);
+  const chart = LightweightCharts.createChart(el, {
+    width: el.offsetWidth,
+    height: 240,
+    layout: { background: { type: 'solid', color: '#161b22' }, textColor: '#8b949e' },
+    grid: { vertLines: { color: '#21262d' }, horzLines: { color: '#21262d' } },
+    crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
+    timeScale: { borderColor: '#30363d', timeVisible: true, secondsVisible: false },
+    rightPriceScale: { borderColor: '#30363d' },
+    handleScroll: true,
+    handleScale: true,
+  });
+  return chart;
+}
+
+function _addSeries(chart) {
+  const cs  = chart.addCandlestickSeries({ upColor:'#3fb950', downColor:'#f85149', borderVisible:false, wickUpColor:'#3fb950', wickDownColor:'#f85149' });
+  const e9  = chart.addLineSeries({ color:'#58a6ff', lineWidth:1, priceLineVisible:false, lastValueVisible:false });
+  const e21 = chart.addLineSeries({ color:'#e3b341', lineWidth:1, priceLineVisible:false, lastValueVisible:false });
+  return { cs, e9, e21 };
+}
+
+function renderPriceCharts(pair) {
+  const cd = D.charts && D.charts[pair];
+  if (!cd) return;
+
+  if (cd.h4 && cd.h4.candles && cd.h4.candles.length) {
+    if (!_chartH4) {
+      _chartH4 = _makeChart('chartH4');
+      const s = _addSeries(_chartH4);
+      _csH4 = s.cs; _ema9H4 = s.e9; _ema21H4 = s.e21;
+    }
+    _csH4.setData(cd.h4.candles);
+    _ema9H4.setData(cd.h4.ema9);
+    _ema21H4.setData(cd.h4.ema21);
+    _chartH4.timeScale().fitContent();
+  }
+
+  if (cd.m15 && cd.m15.candles && cd.m15.candles.length) {
+    if (!_chartM15) {
+      _chartM15 = _makeChart('chartM15');
+      const s = _addSeries(_chartM15);
+      _csM15 = s.cs; _ema9M15 = s.e9; _ema21M15 = s.e21;
+    }
+    _csM15.setData(cd.m15.candles);
+    _ema9M15.setData(cd.m15.ema9);
+    _ema21M15.setData(cd.m15.ema21);
+    _chartM15.timeScale().fitContent();
+  }
+}
+
+window.addEventListener('resize', () => {
+  if (_chartH4)  _chartH4.applyOptions({ width: document.getElementById('chartH4').offsetWidth });
+  if (_chartM15) _chartM15.applyOptions({ width: document.getElementById('chartM15').offsetWidth });
+});
+
+// Auto-refresh: reload cada 30s forzando bypass de caché
+setTimeout(() => {
+  window.location.href = window.location.pathname + '?_t=' + Date.now();
+}, 30000);
+
 _render();
+renderPriceCharts(currentPair);
 </script>
 </body>
 </html>
