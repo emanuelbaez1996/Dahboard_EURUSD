@@ -4,17 +4,36 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Backtest — EURUSD</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.34.0/dist/tabler-icons.min.css">
 <style>
 *,::before,::after{box-sizing:border-box;margin:0;padding:0;}
 body{background:#0d1117;color:#e6edf3;font-family:'Segoe UI',system-ui,sans-serif;font-size:13px;}
+.wrap{display:flex;height:100vh;overflow:hidden;}
+/* ── Sidebar ── */
+.sb{width:224px;min-width:224px;background:#161b22;display:flex;flex-direction:column;border-right:0.5px solid rgba(255,255,255,0.06);overflow:hidden;}
+.sb-logo{display:flex;align-items:center;gap:9px;padding:13px 16px 11px;border-bottom:0.5px solid rgba(255,255,255,0.06);}
+.sb-logo-icon{font-size:18px;}
+.sb-logo-text{font-size:14px;font-weight:500;color:#e6edf3;flex:1;}
+.sb-nav{flex:1;padding:6px 0 2px;overflow-y:auto;}
+.sb-nav::-webkit-scrollbar{width:0;}
+.sec-label{font-size:9.5px;font-weight:500;color:rgba(230,237,243,0.22);text-transform:uppercase;letter-spacing:.09em;padding:10px 16px 4px;}
+.ni{display:flex;align-items:center;gap:9px;padding:7px 16px;cursor:pointer;color:rgba(230,237,243,0.4);font-size:12.5px;position:relative;transition:background .1s,color .1s;}
+.ni:hover{background:rgba(88,166,255,0.06);color:rgba(230,237,243,0.75);}
+.ni.active{background:rgba(88,166,255,0.1);color:#e6edf3;}
+.ni.active::before{content:'';position:absolute;left:0;top:5px;bottom:5px;width:2.5px;background:#58a6ff;border-radius:0 2px 2px 0;}
+.ni i{font-size:15px;width:16px;flex-shrink:0;}
+.ni-label{flex:1;}
+.ndiv{height:0.5px;background:rgba(255,255,255,0.05);margin:5px 14px;}
+/* ── Main area ── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
 .topbar{display:flex;align-items:center;gap:14px;padding:12px 20px;background:#161b22;border-bottom:1px solid #30363d;}
-.topbar a{color:#58a6ff;text-decoration:none;font-size:12px;padding:4px 10px;border:1px solid #30363d;border-radius:6px;}
 .topbar h1{font-size:15px;font-weight:600;color:#e6edf3;}
 .topbar .upd{margin-left:auto;font-size:11px;color:#8b949e;}
-.content{max-width:960px;margin:0 auto;padding:20px;}
+.content{flex:1;overflow-y:auto;max-width:960px;margin:0 auto;padding:20px;width:100%;}
 .section{background:#161b22;border:0.5px solid rgba(255,255,255,0.06);border-radius:8px;padding:16px 18px;margin-bottom:16px;}
 .section h2{font-size:13px;font-weight:600;color:#58a6ff;margin-bottom:4px;}
 .section .desc{font-size:11px;color:#8b949e;margin-bottom:12px;}
+code{font-family:monospace;font-size:11px;background:rgba(255,255,255,0.06);padding:1px 5px;border-radius:3px;}
 table{width:100%;border-collapse:collapse;font-size:12px;}
 thead td{font-size:10px;color:rgba(230,237,243,0.35);padding:5px 10px;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid rgba(255,255,255,0.06);}
 tbody tr{border-bottom:0.5px solid rgba(255,255,255,0.04);}
@@ -22,10 +41,13 @@ tbody tr:last-child{border-bottom:none;}
 tbody td{padding:8px 10px;color:rgba(230,237,243,0.7);}
 .pos{color:#3fb950;font-weight:500;}.neg{color:#f85149;font-weight:500;}
 .badge{font-size:10px;padding:2px 7px;border-radius:4px;font-weight:500;}
+.b-green{background:rgba(63,185,80,0.12);color:#3fb950;}
+.b-orange{background:rgba(210,153,34,0.12);color:#d29922;}
+.b-red{background:rgba(248,81,73,0.12);color:#f85149;}
+.b-grey{background:rgba(139,148,158,0.12);color:#8b949e;}
 .b-ok{background:rgba(63,185,80,0.12);color:#3fb950;}
 .b-warn{background:rgba(210,153,34,0.12);color:#d29922;}
 .b-bad{background:rgba(248,81,73,0.12);color:#f85149;}
-.b-grey{background:rgba(139,148,158,0.12);color:#8b949e;}
 .kpi-row{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
 .kpi{background:#0d1117;border:0.5px solid rgba(255,255,255,0.06);border-radius:6px;padding:10px 14px;min-width:140px;}
 .kpi .lbl{font-size:10px;color:#8b949e;margin-bottom:4px;}
@@ -34,10 +56,33 @@ tbody td{padding:8px 10px;color:rgba(230,237,243,0.7);}
 </style>
 </head>
 <body>
+<div class="wrap">
+
+<div class="sb">
+  <div class="sb-logo">
+    <span class="sb-logo-icon">📈</span>
+    <span class="sb-logo-text">TradingBot</span>
+  </div>
+  <div class="sb-nav">
+    <div class="sec-label">Principal</div>
+    <div class="ni" onclick="location.href='index.html'">
+      <i class="ti ti-layout-dashboard"></i><span class="ni-label">Dashboard</span>
+    </div>
+    <div class="ndiv"></div>
+    <div class="sec-label">Análisis</div>
+    <div class="ni active" onclick="location.href='backtest.html'">
+      <i class="ti ti-chart-histogram"></i><span class="ni-label">Backtest</span>
+    </div>
+    <div class="ni" onclick="location.href='trade_analysis.html'">
+      <i class="ti ti-list-search"></i><span class="ni-label">Análisis Trades</span>
+    </div>
+  </div>
+</div>
+
+<div class="main">
 <div class="topbar">
-  <a href="index.html">← Dashboard</a>
   <h1>📊 Backtest Analysis — EURUSD</h1>
-  <span class="upd">Actualizado: 13/06/2026 14:52 · Fuente: backtest CSV — 2026-06-10_EURUSD_FTMO_202501_202605_v2 (1562 trades)</span>
+  <span class="upd">Actualizado: 13/06/2026 15:05 · Fuente: backtest CSV — 2026-06-10_EURUSD_FTMO_202501_202605_v2 (1562 trades)</span>
 </div>
 <div class="content">
 
@@ -47,14 +92,14 @@ tbody td{padding:8px 10px;color:rgba(230,237,243,0.7);}
     El retorno total es siempre el mismo; lo que varía es el drawdown según la secuencia. Muestra el peor escenario posible con estos trades.</p>
     
             <div class="kpi-row">
-              <div class="kpi"><div class="lbl">P95 DD máx</div><div class="val">11.24%</div><div class="sub">peor 5% de secuencias</div></div>
-              <div class="kpi"><div class="lbl">P(DD ≥ 8% FTMO)</div><div class="val neg">33.9%</div><div class="sub">1,000 simulaciones</div></div>
+              <div class="kpi"><div class="lbl">P95 DD máx</div><div class="val">10.93%</div><div class="sub">peor 5% de secuencias</div></div>
+              <div class="kpi"><div class="lbl">P(DD ≥ 8% FTMO)</div><div class="val neg">32.4%</div><div class="sub">1,000 simulaciones</div></div>
             </div>
             <table><thead><tr><td>Percentil</td><td>DD Máximo</td></tr></thead><tbody>
-              <tr><td>P5 (mejor 95%)</td><td>4.92%</td></tr>
-              <tr><td>P50 (mediana)</td><td>7.09%</td></tr>
-              <tr><td>P95 (peor 5%)</td><td>11.24%</td></tr>
-              <tr><td>Worst case</td><td>15.60%</td></tr>
+              <tr><td>P5 (mejor 95%)</td><td>4.88%</td></tr>
+              <tr><td>P50 (mediana)</td><td>7.05%</td></tr>
+              <tr><td>P95 (peor 5%)</td><td>10.93%</td></tr>
+              <tr><td>Worst case</td><td>17.33%</td></tr>
             </tbody></table>
   </div>
 
@@ -64,14 +109,14 @@ tbody td{padding:8px 10px;color:rgba(230,237,243,0.7);}
     P(DD ≥ 8%) es la probabilidad de tocar el límite de FTMO en un período de ~6 meses.</p>
     
             <div class="kpi-row">
-              <div class="kpi"><div class="lbl">P95 DD máx (6m)</div><div class="val">6.06%</div><div class="sub">peor escenario 5%</div></div>
-              <div class="kpi"><div class="lbl">P50 retorno (6m)</div><div class="val pos">+1.65%</div><div class="sub">escenario mediano</div></div>
-              <div class="kpi"><div class="lbl">P(DD ≥ 8% FTMO)</div><div class="val pos">0.8%</div><div class="sub">120 trades/sim</div></div>
+              <div class="kpi"><div class="lbl">P95 DD máx (6m)</div><div class="val">5.89%</div><div class="sub">peor escenario 5%</div></div>
+              <div class="kpi"><div class="lbl">P50 retorno (6m)</div><div class="val pos">+1.96%</div><div class="sub">escenario mediano</div></div>
+              <div class="kpi"><div class="lbl">P(DD ≥ 8% FTMO)</div><div class="val pos">1.0%</div><div class="sub">120 trades/sim</div></div>
             </div>
             <table><thead><tr><td>Percentil</td><td>DD Máximo</td><td>Retorno</td></tr></thead><tbody>
-              <tr><td>P5 (peor 5%)</td>  <td>1.57%</td>  <td class="neg">-3.90%</td></tr>
-              <tr><td>P50 (mediana)</td>  <td>3.02%</td> <td class="pos">+1.65%</td></tr>
-              <tr><td>P95 (mejor 5%)</td><td>6.06%</td>  <td class="pos">+6.93%</td></tr>
+              <tr><td>P5 (peor 5%)</td>  <td>1.59%</td>  <td class="neg">-3.94%</td></tr>
+              <tr><td>P50 (mediana)</td>  <td>2.90%</td> <td class="pos">+1.96%</td></tr>
+              <tr><td>P95 (mejor 5%)</td><td>5.89%</td>  <td class="pos">+7.48%</td></tr>
             </tbody></table>
   </div>
 
@@ -87,6 +132,22 @@ tbody td{padding:8px 10px;color:rgba(230,237,243,0.7);}
             <tbody><tr><td>2024-06 / 2024-09</td><td>310</td><td>38.4%</td><td>1.19</td><td class="pos">+20.74%</td><td>2.63%</td><td><span class="badge b-ok">✅</span></td></tr><tr><td>2024-10 / 2025-01</td><td>335</td><td>34.3%</td><td>1.01</td><td class="pos">+1.25%</td><td>4.73%</td><td><span class="badge b-ok">✅</span></td></tr><tr><td>2025-02 / 2025-05</td><td>382</td><td>34.6%</td><td>1.03</td><td class="pos">+3.44%</td><td>7.74%</td><td><span class="badge b-warn">↑</span></td></tr><tr><td>2025-06 / 2025-09</td><td>360</td><td>36.1%</td><td>1.09</td><td class="pos">+11.76%</td><td>2.57%</td><td><span class="badge b-ok">✅</span></td></tr><tr><td>2025-10 / 2026-01</td><td>367</td><td>38.4%</td><td>1.21</td><td class="pos">+26.12%</td><td>2.17%</td><td><span class="badge b-ok">✅</span></td></tr><tr><td>2026-02 / 2026-05</td><td>376</td><td>35.9%</td><td>1.08</td><td class="pos">+10.49%</td><td>3.69%</td><td><span class="badge b-ok">✅</span></td></tr><tr><td>2026-06 / 2026-06</td><td>38</td><td>47.4%</td><td>1.73</td><td class="pos">+7.72%</td><td>0.05%</td><td><span class="badge b-ok">✅</span></td></tr></tbody></table>
   </div>
 
+  <div class="section">
+    <h2>Stress Test — Períodos extremos del mercado</h2>
+    <p class="desc">Corre la estrategia de producción sobre escenarios históricos de alta volatilidad, cambios de régimen y mercados laterales.
+    KS = kill switch del 8% FTMO habría sido activado. Hover sobre escenario para ver contexto. Datos desde caché — actualizar con <code>stress_test.py --save</code>.</p>
+    
+            <div class="kpi-row">
+              <div class="kpi"><div class="lbl">KS disparados</div><div class="val neg">3/5</div><div class="sub">escenarios que habrían tocado 8% FTMO</div></div>
+              <div class="kpi"><div class="lbl">Peor DD(FTMO)</div><div class="val neg">8.50%</div><div class="sub">sobre todos los escenarios</div></div>
+            </div>
+            <table><thead><tr><td>Escenario</td><td>Trades</td><td>WR</td><td>PF</td><td>Retorno</td><td>DD FTMO</td><td>KS</td><td>Est.</td></tr></thead>
+            <tbody><tr><td title="EUR cayó desde 1.13 a la paridad (0.9950) — caída sostenida">USD surge / rate hikes (Jan-Jun 2022)</td><td>73</td><td>37.0%</td><td>1.14</td><td class="pos">+3.40%</td><td>1.53%</td><td><span class="badge b-green">ok</span></td><td><span class="badge b-green">✅</span></td></tr><tr><td title="EUR bajo 1.00 en agosto; rebote desde Oct con pivot Fed">Paridad EUR/USD (Jul-Dec 2022)</td><td>271</td><td>31.7%</td><td>0.91</td><td class="neg">-8.50%</td><td>8.50%</td><td><span class="badge b-red">⛔ KS</span></td><td><span class="badge b-red">❌</span></td></tr><tr><td title="Volatilidad extrema intradía; sesiones con gaps grandes">Crisis bancaria SVB (Mar-May 2023)</td><td>32</td><td>15.6%</td><td>0.36</td><td class="neg">-8.40%</td><td>8.40%</td><td><span class="badge b-red">⛔ KS</span></td><td><span class="badge b-red">❌</span></td></tr><tr><td title="EUR osciló entre 1.06 y 1.12 sin tendencia clara — ADX bajo">Rango lateralizado (Jun-Oct 2023)</td><td>478</td><td>33.1%</td><td>0.96</td><td class="neg">-7.37%</td><td>8.28%</td><td><span class="badge b-red">⛔ KS</span></td><td><span class="badge b-red">❌</span></td></tr><tr><td title="USD se apreció 5% en semanas; EUR cayó de 1.09 a 1.03">Elección Trump (Nov-Dec 2024)</td><td>169</td><td>32.5%</td><td>0.94</td><td class="neg">-3.64%</td><td>4.59%</td><td><span class="badge b-green">ok</span></td><td><span class="badge b-red">❌</span></td></tr></tbody></table>
+            <p style="color:#8b949e;margin-top:8px">Sin datos MT5: COVID crash (Feb-Apr 2020), Recuperación QE (May-Dec 2020)</p>
+  </div>
+
+</div>
+</div>
 </div>
 </body>
 </html>
