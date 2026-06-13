@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Backtest — EURUSD</title>
+<title>Backtest Analysis</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.34.0/dist/tabler-icons.min.css">
 <style>
 *,::before,::after{box-sizing:border-box;margin:0;padding:0;}
@@ -53,6 +53,14 @@ tbody td{padding:8px 10px;color:rgba(230,237,243,0.7);}
 .kpi .lbl{font-size:10px;color:#8b949e;margin-bottom:4px;}
 .kpi .val{font-size:18px;font-weight:500;font-family:monospace;color:#e6edf3;}
 .kpi .sub{font-size:10px;color:#8b949e;margin-top:2px;}
+
+.sec-header { display:flex; align-items:center; gap:8px; margin-bottom:6px; flex-wrap:wrap; }
+.sec-header h2 { margin-bottom:0; }
+.sec-badge { font-size:10px; padding:2px 7px; border-radius:4px; font-weight:500; flex-shrink:0; }
+.par-eurusd { background:#1a2d3d; color:#58a6ff; }
+.par-xauusd { background:#3d2b1a; color:#f0883e; }
+.cta-ftmo   { background:#1a2d1a; color:#3fb950; }
+.cta-exness { background:#2a1a3d; color:#bc8cff; }
 </style>
 </head>
 <body>
@@ -81,70 +89,16 @@ tbody td{padding:8px 10px;color:rgba(230,237,243,0.7);}
 
 <div class="main">
 <div class="topbar">
-  <h1>📊 Backtest Analysis — EURUSD</h1>
-  <span class="upd">Actualizado: 13/06/2026 15:05 · Fuente: backtest CSV — 2026-06-10_EURUSD_FTMO_202501_202605_v2 (1562 trades)</span>
+  <h1>📊 Backtest Analysis</h1>
+  <span class="upd">Actualizado: 13/06/2026 15:30</span>
 </div>
 <div class="content">
 
-  <div class="section">
-    <h2>Monte Carlo — Shuffle (riesgo de secuencia adversa)</h2>
-    <p class="desc">Baraja el orden de los 1562 trades del backtest 1,000 veces.
-    El retorno total es siempre el mismo; lo que varía es el drawdown según la secuencia. Muestra el peor escenario posible con estos trades.</p>
-    
-            <div class="kpi-row">
-              <div class="kpi"><div class="lbl">P95 DD máx</div><div class="val">10.93%</div><div class="sub">peor 5% de secuencias</div></div>
-              <div class="kpi"><div class="lbl">P(DD ≥ 8% FTMO)</div><div class="val neg">32.4%</div><div class="sub">1,000 simulaciones</div></div>
-            </div>
-            <table><thead><tr><td>Percentil</td><td>DD Máximo</td></tr></thead><tbody>
-              <tr><td>P5 (mejor 95%)</td><td>4.88%</td></tr>
-              <tr><td>P50 (mediana)</td><td>7.05%</td></tr>
-              <tr><td>P95 (peor 5%)</td><td>10.93%</td></tr>
-              <tr><td>Worst case</td><td>17.33%</td></tr>
-            </tbody></table>
-  </div>
+  <div class="section"><div class="sec-header"><h2>Monte Carlo</h2><span class="sec-badge par-eurusd">EURUSD</span><span class="sec-badge cta-ftmo">FTMO</span></div><p class="desc">Sin datos suficientes — EURUSD · FTMO — 3 trades (mín 30)</p></div><div class="section"><div class="sec-header"><h2>Monte Carlo</h2><span class="sec-badge par-eurusd">EURUSD</span><span class="sec-badge cta-exness">EXNESS</span></div><p class="desc">Sin datos suficientes — EURUSD · EXNESS — 0 trades (mín 30)</p></div><div class="section"><div class="sec-header"><h2>Monte Carlo</h2><span class="sec-badge par-xauusd">XAUUSD</span><span class="sec-badge cta-exness">EXNESS</span></div><p class="desc">Sin datos suficientes — XAUUSD · EXNESS — 0 trades (mín 30)</p></div>
 
-  <div class="section">
-    <h2>Monte Carlo — Bootstrap (proyección 6 meses)</h2>
-    <p class="desc">Muestrea 120 trades con reemplazo para simular períodos futuros. Tanto el retorno como el drawdown varían.
-    P(DD ≥ 8%) es la probabilidad de tocar el límite de FTMO en un período de ~6 meses.</p>
-    
-            <div class="kpi-row">
-              <div class="kpi"><div class="lbl">P95 DD máx (6m)</div><div class="val">5.89%</div><div class="sub">peor escenario 5%</div></div>
-              <div class="kpi"><div class="lbl">P50 retorno (6m)</div><div class="val pos">+1.96%</div><div class="sub">escenario mediano</div></div>
-              <div class="kpi"><div class="lbl">P(DD ≥ 8% FTMO)</div><div class="val pos">1.0%</div><div class="sub">120 trades/sim</div></div>
-            </div>
-            <table><thead><tr><td>Percentil</td><td>DD Máximo</td><td>Retorno</td></tr></thead><tbody>
-              <tr><td>P5 (peor 5%)</td>  <td>1.59%</td>  <td class="neg">-3.94%</td></tr>
-              <tr><td>P50 (mediana)</td>  <td>2.90%</td> <td class="pos">+1.96%</td></tr>
-              <tr><td>P95 (mejor 5%)</td><td>5.89%</td>  <td class="pos">+7.48%</td></tr>
-            </tbody></table>
-  </div>
+  <div class="section"><div class="sec-header"><h2>Walk-Forward — Ventanas de 4 meses</h2><span class="sec-badge par-eurusd">EURUSD</span><span class="sec-badge cta-exness">Backtest CSV</span></div><p class="desc">Divide los 28 meses de historia en ventanas no solapadas con spread/slippage + filtro noticias.</p><div class="kpi-row"><div class="kpi"><div class="lbl">Ventanas rentables</div><div class="val">7/7</div><div class="sub">períodos de 4 meses</div></div></div><table><thead><tr><td>Período</td><td>Trades</td><td>WR</td><td>PF</td><td>Retorno</td><td>DD FTMO</td><td>Estado</td></tr></thead><tbody><tr><td>2024-06 / 2024-09</td><td>310</td><td>38.4%</td><td>1.19</td><td class="pos">+20.74%</td><td>2.63%</td><td><span class="badge b-ok">✅</span></td></tr><tr><td>2024-10 / 2025-01</td><td>335</td><td>34.3%</td><td>1.01</td><td class="pos">+1.25%</td><td>4.73%</td><td><span class="badge b-ok">✅</span></td></tr><tr><td>2025-02 / 2025-05</td><td>382</td><td>34.6%</td><td>1.03</td><td class="pos">+3.44%</td><td>7.74%</td><td><span class="badge b-warn">↑</span></td></tr><tr><td>2025-06 / 2025-09</td><td>360</td><td>36.1%</td><td>1.09</td><td class="pos">+11.76%</td><td>2.57%</td><td><span class="badge b-ok">✅</span></td></tr><tr><td>2025-10 / 2026-01</td><td>367</td><td>38.4%</td><td>1.21</td><td class="pos">+26.12%</td><td>2.17%</td><td><span class="badge b-ok">✅</span></td></tr><tr><td>2026-02 / 2026-05</td><td>376</td><td>35.9%</td><td>1.08</td><td class="pos">+10.49%</td><td>3.69%</td><td><span class="badge b-ok">✅</span></td></tr><tr><td>2026-06 / 2026-06</td><td>38</td><td>47.4%</td><td>1.73</td><td class="pos">+7.72%</td><td>0.05%</td><td><span class="badge b-ok">✅</span></td></tr></tbody></table></div><div class="section"><div class="sec-header"><h2>Walk-Forward</h2><span class="sec-badge par-xauusd">XAUUSD</span><span class="sec-badge cta-exness">EXNESS</span></div><p class="desc" style="color:#8b949e">Pendiente — se realizará cuando haya datos suficientes en demo.</p></div>
 
-  <div class="section">
-    <h2>Walk-Forward — Ventanas de 4 meses</h2>
-    <p class="desc">Divide los 28 meses de historia en ventanas no solapadas y corre la estrategia de producción en cada una
-    (con spread/slippage + filtro noticias). Verifica consistencia sin sobreajuste.</p>
-    
-            <div class="kpi-row">
-              <div class="kpi"><div class="lbl">Ventanas rentables</div><div class="val">7/7</div><div class="sub">períodos de 4 meses</div></div>
-            </div>
-            <table><thead><tr><td>Período</td><td>Trades</td><td>WR</td><td>PF</td><td>Retorno</td><td>DD FTMO</td><td>Estado</td></tr></thead>
-            <tbody><tr><td>2024-06 / 2024-09</td><td>310</td><td>38.4%</td><td>1.19</td><td class="pos">+20.74%</td><td>2.63%</td><td><span class="badge b-ok">✅</span></td></tr><tr><td>2024-10 / 2025-01</td><td>335</td><td>34.3%</td><td>1.01</td><td class="pos">+1.25%</td><td>4.73%</td><td><span class="badge b-ok">✅</span></td></tr><tr><td>2025-02 / 2025-05</td><td>382</td><td>34.6%</td><td>1.03</td><td class="pos">+3.44%</td><td>7.74%</td><td><span class="badge b-warn">↑</span></td></tr><tr><td>2025-06 / 2025-09</td><td>360</td><td>36.1%</td><td>1.09</td><td class="pos">+11.76%</td><td>2.57%</td><td><span class="badge b-ok">✅</span></td></tr><tr><td>2025-10 / 2026-01</td><td>367</td><td>38.4%</td><td>1.21</td><td class="pos">+26.12%</td><td>2.17%</td><td><span class="badge b-ok">✅</span></td></tr><tr><td>2026-02 / 2026-05</td><td>376</td><td>35.9%</td><td>1.08</td><td class="pos">+10.49%</td><td>3.69%</td><td><span class="badge b-ok">✅</span></td></tr><tr><td>2026-06 / 2026-06</td><td>38</td><td>47.4%</td><td>1.73</td><td class="pos">+7.72%</td><td>0.05%</td><td><span class="badge b-ok">✅</span></td></tr></tbody></table>
-  </div>
-
-  <div class="section">
-    <h2>Stress Test — Períodos extremos del mercado</h2>
-    <p class="desc">Corre la estrategia de producción sobre escenarios históricos de alta volatilidad, cambios de régimen y mercados laterales.
-    KS = kill switch del 8% FTMO habría sido activado. Hover sobre escenario para ver contexto. Datos desde caché — actualizar con <code>stress_test.py --save</code>.</p>
-    
-            <div class="kpi-row">
-              <div class="kpi"><div class="lbl">KS disparados</div><div class="val neg">3/5</div><div class="sub">escenarios que habrían tocado 8% FTMO</div></div>
-              <div class="kpi"><div class="lbl">Peor DD(FTMO)</div><div class="val neg">8.50%</div><div class="sub">sobre todos los escenarios</div></div>
-            </div>
-            <table><thead><tr><td>Escenario</td><td>Trades</td><td>WR</td><td>PF</td><td>Retorno</td><td>DD FTMO</td><td>KS</td><td>Est.</td></tr></thead>
-            <tbody><tr><td title="EUR cayó desde 1.13 a la paridad (0.9950) — caída sostenida">USD surge / rate hikes (Jan-Jun 2022)</td><td>73</td><td>37.0%</td><td>1.14</td><td class="pos">+3.40%</td><td>1.53%</td><td><span class="badge b-green">ok</span></td><td><span class="badge b-green">✅</span></td></tr><tr><td title="EUR bajo 1.00 en agosto; rebote desde Oct con pivot Fed">Paridad EUR/USD (Jul-Dec 2022)</td><td>271</td><td>31.7%</td><td>0.91</td><td class="neg">-8.50%</td><td>8.50%</td><td><span class="badge b-red">⛔ KS</span></td><td><span class="badge b-red">❌</span></td></tr><tr><td title="Volatilidad extrema intradía; sesiones con gaps grandes">Crisis bancaria SVB (Mar-May 2023)</td><td>32</td><td>15.6%</td><td>0.36</td><td class="neg">-8.40%</td><td>8.40%</td><td><span class="badge b-red">⛔ KS</span></td><td><span class="badge b-red">❌</span></td></tr><tr><td title="EUR osciló entre 1.06 y 1.12 sin tendencia clara — ADX bajo">Rango lateralizado (Jun-Oct 2023)</td><td>478</td><td>33.1%</td><td>0.96</td><td class="neg">-7.37%</td><td>8.28%</td><td><span class="badge b-red">⛔ KS</span></td><td><span class="badge b-red">❌</span></td></tr><tr><td title="USD se apreció 5% en semanas; EUR cayó de 1.09 a 1.03">Elección Trump (Nov-Dec 2024)</td><td>169</td><td>32.5%</td><td>0.94</td><td class="neg">-3.64%</td><td>4.59%</td><td><span class="badge b-green">ok</span></td><td><span class="badge b-red">❌</span></td></tr></tbody></table>
-            <p style="color:#8b949e;margin-top:8px">Sin datos MT5: COVID crash (Feb-Apr 2020), Recuperación QE (May-Dec 2020)</p>
-  </div>
+  <div class="section"><div class="sec-header"><h2>Stress Test — Períodos extremos</h2><span class="sec-badge par-eurusd">EURUSD</span><span class="sec-badge cta-exness">MT5 Demo</span></div><p class="desc">Corre la estrategia sobre escenarios históricos extremos. KS = kill switch 8% FTMO activado. Datos desde caché — actualizar: <code>stress_test.py --save</code></p><div class="kpi-row"><div class="kpi"><div class="lbl">KS disparados</div><div class="val neg">3/5</div><div class="sub">escenarios que tocaron 8%</div></div><div class="kpi"><div class="lbl">Peor DD(FTMO)</div><div class="val neg">8.50%</div><div class="sub">sobre todos los escenarios</div></div></div><table><thead><tr><td>Escenario</td><td>Trades</td><td>WR</td><td>PF</td><td>Retorno</td><td>DD FTMO</td><td>KS</td><td>Est.</td></tr></thead><tbody><tr><td title="EUR cayó desde 1.13 a la paridad (0.9950) — caída sostenida">USD surge / rate hikes (Jan-Jun 2022)</td><td>73</td><td>37.0%</td><td>1.14</td><td class="pos">+3.40%</td><td>1.53%</td><td><span class="badge b-green">ok</span></td><td><span class="badge b-green">✅</span></td></tr><tr><td title="EUR bajo 1.00 en agosto; rebote desde Oct con pivot Fed">Paridad EUR/USD (Jul-Dec 2022)</td><td>271</td><td>31.7%</td><td>0.91</td><td class="neg">-8.50%</td><td>8.50%</td><td><span class="badge b-red">⛔ KS</span></td><td><span class="badge b-red">❌</span></td></tr><tr><td title="Volatilidad extrema intradía; sesiones con gaps grandes">Crisis bancaria SVB (Mar-May 2023)</td><td>32</td><td>15.6%</td><td>0.36</td><td class="neg">-8.40%</td><td>8.40%</td><td><span class="badge b-red">⛔ KS</span></td><td><span class="badge b-red">❌</span></td></tr><tr><td title="EUR osciló entre 1.06 y 1.12 sin tendencia clara — ADX bajo">Rango lateralizado (Jun-Oct 2023)</td><td>478</td><td>33.1%</td><td>0.96</td><td class="neg">-7.37%</td><td>8.28%</td><td><span class="badge b-red">⛔ KS</span></td><td><span class="badge b-red">❌</span></td></tr><tr><td title="USD se apreció 5% en semanas; EUR cayó de 1.09 a 1.03">Elección Trump (Nov-Dec 2024)</td><td>169</td><td>32.5%</td><td>0.94</td><td class="neg">-3.64%</td><td>4.59%</td><td><span class="badge b-green">ok</span></td><td><span class="badge b-red">❌</span></td></tr></tbody></table><p style="color:#8b949e;margin-top:8px">Sin datos MT5: COVID crash (Feb-Apr 2020), Recuperación QE (May-Dec 2020)</p></div><div class="section"><div class="sec-header"><h2>Stress Test</h2><span class="sec-badge par-xauusd">XAUUSD</span><span class="sec-badge cta-exness">EXNESS</span></div><p class="desc" style="color:#8b949e">Pendiente — se realizará cuando haya datos MT5 demo suficientes.</p></div>
 
 </div>
 </div>
