@@ -170,11 +170,18 @@ function createCharts() {
   if (!h4div || !m15div) return;
 
   const opts = {
-    layout:     { background: { color: '#0d1117' }, textColor: '#8b949e' },
-    grid:       { vertLines: { color: '#21262d' }, horzLines: { color: '#21262d' } },
-    crosshair:  { mode: 1 },
-    rightPriceScale: { borderColor: '#30363d' },
-    timeScale:  { borderColor: '#30363d', timeVisible: true },
+    autoSize:  true,
+    layout:    { background: { color: '#0d1117' }, textColor: '#8b949e' },
+    grid:      { vertLines: { color: '#21262d' }, horzLines: { color: '#21262d' } },
+    crosshair: { mode: 1 },
+    rightPriceScale: {
+      borderColor:   '#30363d',
+      visible:       true,
+      borderVisible: true,
+      ticksVisible:  true,
+      scaleMargins:  { top: 0.08, bottom: 0.08 },
+    },
+    timeScale: { borderColor: '#30363d', timeVisible: true, secondsVisible: false },
   };
 
   chartH4  = LightweightCharts.createChart(h4div,  { ...opts });
