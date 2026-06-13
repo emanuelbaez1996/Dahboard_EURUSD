@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Backtest — EURUSD</title>
+<style>
+*,::before,::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:#0d1117;color:#e6edf3;font-family:'Segoe UI',system-ui,sans-serif;font-size:13px;}
+.topbar{display:flex;align-items:center;gap:14px;padding:12px 20px;background:#161b22;border-bottom:1px solid #30363d;}
+.topbar a{color:#58a6ff;text-decoration:none;font-size:12px;padding:4px 10px;border:1px solid #30363d;border-radius:6px;}
+.topbar h1{font-size:15px;font-weight:600;color:#e6edf3;}
+.topbar .upd{margin-left:auto;font-size:11px;color:#8b949e;}
+.content{max-width:960px;margin:0 auto;padding:20px;}
+.section{background:#161b22;border:0.5px solid rgba(255,255,255,0.06);border-radius:8px;padding:16px 18px;margin-bottom:16px;}
+.section h2{font-size:13px;font-weight:600;color:#58a6ff;margin-bottom:4px;}
+.section .desc{font-size:11px;color:#8b949e;margin-bottom:12px;}
+table{width:100%;border-collapse:collapse;font-size:12px;}
+thead td{font-size:10px;color:rgba(230,237,243,0.35);padding:5px 10px;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid rgba(255,255,255,0.06);}
+tbody tr{border-bottom:0.5px solid rgba(255,255,255,0.04);}
+tbody tr:last-child{border-bottom:none;}
+tbody td{padding:8px 10px;color:rgba(230,237,243,0.7);}
+.pos{color:#3fb950;font-weight:500;}.neg{color:#f85149;font-weight:500;}
+.badge{font-size:10px;padding:2px 7px;border-radius:4px;font-weight:500;}
+.b-ok{background:rgba(63,185,80,0.12);color:#3fb950;}
+.b-warn{background:rgba(210,153,34,0.12);color:#d29922;}
+.b-bad{background:rgba(248,81,73,0.12);color:#f85149;}
+.b-grey{background:rgba(139,148,158,0.12);color:#8b949e;}
+.kpi-row{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
+.kpi{background:#0d1117;border:0.5px solid rgba(255,255,255,0.06);border-radius:6px;padding:10px 14px;min-width:140px;}
+.kpi .lbl{font-size:10px;color:#8b949e;margin-bottom:4px;}
+.kpi .val{font-size:18px;font-weight:500;font-family:monospace;color:#e6edf3;}
+.kpi .sub{font-size:10px;color:#8b949e;margin-top:2px;}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a href="index.html">← Dashboard</a>
+  <h1>📊 Backtest Analysis — EURUSD</h1>
+  <span class="upd">Actualizado: 13/06/2026 14:52 · Fuente: backtest CSV — 2026-06-10_EURUSD_FTMO_202501_202605_v2 (1562 trades)</span>
+</div>
+<div class="content">
+
+  <div class="section">
+    <h2>Monte Carlo — Shuffle (riesgo de secuencia adversa)</h2>
+    <p class="desc">Baraja el orden de los 1562 trades del backtest 1,000 veces.
+    El retorno total es siempre el mismo; lo que varía es el drawdown según la secuencia. Muestra el peor escenario posible con estos trades.</p>
+    
+            <div class="kpi-row">
+              <div class="kpi"><div class="lbl">P95 DD máx</div><div class="val">11.24%</div><div class="sub">peor 5% de secuencias</div></div>
+              <div class="kpi"><div class="lbl">P(DD ≥ 8% FTMO)</div><div class="val neg">33.9%</div><div class="sub">1,000 simulaciones</div></div>
+            </div>
+            <table><thead><tr><td>Percentil</td><td>DD Máximo</td></tr></thead><tbody>
+              <tr><td>P5 (mejor 95%)</td><td>4.92%</td></tr>
+              <tr><td>P50 (mediana)</td><td>7.09%</td></tr>
+              <tr><td>P95 (peor 5%)</td><td>11.24%</td></tr>
+              <tr><td>Worst case</td><td>15.60%</td></tr>
+            </tbody></table>
+  </div>
+
+  <div class="section">
+    <h2>Monte Carlo — Bootstrap (proyección 6 meses)</h2>
+    <p class="desc">Muestrea 120 trades con reemplazo para simular períodos futuros. Tanto el retorno como el drawdown varían.
+    P(DD ≥ 8%) es la probabilidad de tocar el límite de FTMO en un período de ~6 meses.</p>
+    
+            <div class="kpi-row">
+              <div class="kpi"><div class="lbl">P95 DD máx (6m)</div><div class="val">6.06%</div><div class="sub">peor escenario 5%</div></div>
+              <div class="kpi"><div class="lbl">P50 retorno (6m)</div><div class="val pos">+1.65%</div><div class="sub">escenario mediano</div></div>
+              <div class="kpi"><div class="lbl">P(DD ≥ 8% FTMO)</div><div class="val pos">0.8%</div><div class="sub">120 trades/sim</div></div>
+            </div>
+            <table><thead><tr><td>Percentil</td><td>DD Máximo</td><td>Retorno</td></tr></thead><tbody>
+              <tr><td>P5 (peor 5%)</td>  <td>1.57%</td>  <td class="neg">-3.90%</td></tr>
+              <tr><td>P50 (mediana)</td>  <td>3.02%</td> <td class="pos">+1.65%</td></tr>
+              <tr><td>P95 (mejor 5%)</td><td>6.06%</td>  <td class="pos">+6.93%</td></tr>
+            </tbody></table>
+  </div>
+
+  <div class="section">
+    <h2>Walk-Forward — Ventanas de 4 meses</h2>
+    <p class="desc">Divide los 28 meses de historia en ventanas no solapadas y corre la estrategia de producción en cada una
+    (con spread/slippage + filtro noticias). Verifica consistencia sin sobreajuste.</p>
+    
+            <div class="kpi-row">
+              <div class="kpi"><div class="lbl">Ventanas rentables</div><div class="val">7/7</div><div class="sub">períodos de 4 meses</div></div>
+            </div>
+            <table><thead><tr><td>Período</td><td>Trades</td><td>WR</td><td>PF</td><td>Retorno</td><td>DD FTMO</td><td>Estado</td></tr></thead>
+            <tbody><tr><td>2024-06 / 2024-09</td><td>310</td><td>38.4%</td><td>1.19</td><td class="pos">+20.74%</td><td>2.63%</td><td><span class="badge b-ok">✅</span></td></tr><tr><td>2024-10 / 2025-01</td><td>335</td><td>34.3%</td><td>1.01</td><td class="pos">+1.25%</td><td>4.73%</td><td><span class="badge b-ok">✅</span></td></tr><tr><td>2025-02 / 2025-05</td><td>382</td><td>34.6%</td><td>1.03</td><td class="pos">+3.44%</td><td>7.74%</td><td><span class="badge b-warn">↑</span></td></tr><tr><td>2025-06 / 2025-09</td><td>360</td><td>36.1%</td><td>1.09</td><td class="pos">+11.76%</td><td>2.57%</td><td><span class="badge b-ok">✅</span></td></tr><tr><td>2025-10 / 2026-01</td><td>367</td><td>38.4%</td><td>1.21</td><td class="pos">+26.12%</td><td>2.17%</td><td><span class="badge b-ok">✅</span></td></tr><tr><td>2026-02 / 2026-05</td><td>376</td><td>35.9%</td><td>1.08</td><td class="pos">+10.49%</td><td>3.69%</td><td><span class="badge b-ok">✅</span></td></tr><tr><td>2026-06 / 2026-06</td><td>38</td><td>47.4%</td><td>1.73</td><td class="pos">+7.72%</td><td>0.05%</td><td><span class="badge b-ok">✅</span></td></tr></tbody></table>
+  </div>
+
+</div>
+</body>
+</html>
