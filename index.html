@@ -88,6 +88,21 @@ body{background:#0d1117;color:#e6edf3;font-family:var(--sans);font-size:13px;}
 .page-title{font-size:14px;font-weight:500;color:#e6edf3;margin-bottom:2px;}
 .page-sub{font-size:11px;color:rgba(230,237,243,0.3);}
 
+/* Balance card */
+.bal-card{background:#161b22;border:0.5px solid rgba(255,255,255,0.08);border-radius:8px;padding:13px 16px;display:flex;align-items:center;justify-content:space-between;}
+.bal-left{display:flex;flex-direction:column;gap:3px;}
+.bal-lbl{font-size:9.5px;font-weight:500;color:rgba(230,237,243,0.35);text-transform:uppercase;letter-spacing:.08em;}
+.bal-val{font-size:26px;font-weight:600;color:#e6edf3;font-family:var(--mono);line-height:1.1;}
+.bal-sub{font-size:10px;color:rgba(230,237,243,0.3);}
+.bal-right{text-align:right;}
+.bal-chip{font-size:15px;font-weight:500;font-family:var(--mono);}
+.bal-chip-sub{font-size:9.5px;color:rgba(230,237,243,0.3);margin-top:2px;}
+
+/* Sidebar balance */
+.sb-bal-row{display:flex;align-items:baseline;gap:7px;margin-top:2px;}
+.sb-bal-val{font-size:16px;font-weight:600;color:#e6edf3;font-family:var(--mono);}
+.sb-bal-pnl{font-size:10.5px;font-weight:500;font-family:var(--mono);}
+
 /* KPI grids */
 .kpi6{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
 .kpi4{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
@@ -220,19 +235,21 @@ tbody td{padding:7px 14px;color:rgba(230,237,243,0.65);}
 
   <div class="ftmo-block" id="ftmo-progress">
     <div class="ftmo-hdr">
-      <span class="ftmo-ttl">FTMO Progress</span>
-      <span class="ftmo-bdg">XAUUSDm</span>
+      <span class="ftmo-ttl">Balance cuenta</span>
+      <span class="ftmo-bdg" id="sb-bal-badge">—</span>
     </div>
-    <div>
-      <div class="ftmo-pr">
-        <span class="ftmo-pn">Phase 1 (+10%)</span>
-        <span class="ftmo-pm">faltan <b id="fp-falta">—</b></span>
-      </div>
-      <div class="ftmo-bg"><div class="ftmo-fill" id="fp-bar" style="width:0%;background:#58a6ff;"></div></div>
-      <div class="ftmo-am">
-        <span class="ftmo-a" id="fp-ganado">$0 ganados</span>
-        <span class="ftmo-a">meta $10,000</span>
-      </div>
+    <div class="sb-bal-row">
+      <span class="sb-bal-val" id="sb-balance">—</span>
+      <span class="sb-bal-pnl" id="sb-balance-pnl">—</span>
+    </div>
+    <div class="ftmo-pr" style="margin-top:6px;">
+      <span class="ftmo-pn">Phase 1 (+10%)</span>
+      <span class="ftmo-pm">faltan <b id="fp-falta">—</b></span>
+    </div>
+    <div class="ftmo-bg"><div class="ftmo-fill" id="fp-bar" style="width:0%;background:#58a6ff;"></div></div>
+    <div class="ftmo-am">
+      <span class="ftmo-a" id="fp-ganado">$0 ganados</span>
+      <span class="ftmo-a">meta $10,000</span>
     </div>
   </div>
 
@@ -256,9 +273,20 @@ tbody td{padding:7px 14px;color:rgba(230,237,243,0.65);}
     <div class="page-title">Visión Global</div>
     <div class="page-sub" id="p1-sub">Toda la historia del bot — XAUUSDm · FTMO</div>
   </div>
+  <div class="bal-card" id="p1-bal-card">
+    <div class="bal-left">
+      <div class="bal-lbl">Balance actual</div>
+      <div class="bal-val" id="p1-balance">—</div>
+      <div class="bal-sub" id="p1-balance-sub">capital inicial $10,000</div>
+    </div>
+    <div class="bal-right">
+      <div class="bal-chip" id="p1-balance-chip">—</div>
+      <div class="bal-chip-sub">retorno total</div>
+    </div>
+  </div>
   <div class="kpi6">
     <div class="kpi">
-      <div class="kpi-lbl">Ganancia total acumulada</div>
+      <div class="kpi-lbl">Ganancia acumulada (trades)</div>
       <div class="kpi-val pos" id="p1-ganancia">—</div>
       <div class="kpi-sub" id="p1-retorno">desde inicio</div>
     </div>
@@ -544,6 +572,7 @@ function setPar(p) {
 
 function render() {
   var d = gd();
+  updateFTMOProgress();
   if (CG === 1) renderGlobal(d);
   if (CG === 2) renderMonthly(d);
   if (CG === 3) renderChallenge();
@@ -632,6 +661,13 @@ function renderGlobal(d) {
   if (!d) return;
   var bLabel = CB === 'ftmo' ? 'FTMO' : 'EXNESS';
   _set('p1-sub', 'Toda la historia del bot — ' + d.par + ' · ' + bLabel);
+  // Balance real
+  var balColor = d.retornoColor || '#e6edf3';
+  _set('p1-balance', d.capitalStr || '—');
+  _set('p1-balance-sub', 'capital inicial ' + (d.capitalIniStr || '$10,000'));
+  _set('p1-balance-chip', d.retornoTotalStr || '—', balColor);
+  var balCard = document.getElementById('p1-bal-card');
+  if (balCard) balCard.style.borderColor = balColor === '#3fb950' ? 'rgba(63,185,80,0.25)' : balColor === '#f85149' ? 'rgba(248,81,73,0.25)' : 'rgba(255,255,255,0.08)';
   _set('p1-ganancia', d.gananciaTotalStr, d.retornoColor);
   _set('p1-retorno', d.retornoTotalStr);
   _set('p1-wr', d.winRateStr, d.winRateColor);
@@ -730,12 +766,37 @@ function renderConfig(d) {
 }
 
 function updateFTMOProgress() {
-  var ch = D.ftmo && D.ftmo.xauusd && D.ftmo.xauusd.challenge;
-  if (!ch || !ch.active) return;
-  _set('fp-falta', ch.falta);
-  _set('fp-ganado', ch.ganancia + ' ganados');
-  var bar = document.getElementById('fp-bar');
-  if (bar) bar.style.width = ch.barraFill + '%';
+  var d = D.ftmo && D.ftmo.xauusd;
+  if (!d) return;
+  // Balance siempre visible en sidebar
+  var retColor = d.retornoColor || '#e6edf3';
+  _set('sb-balance', d.capitalStr || '—');
+  _set('sb-balance-pnl', d.retornoTotalStr || '', retColor);
+  var badge = document.getElementById('sb-bal-badge');
+  if (badge) {
+    badge.textContent = d.retornoTotalStr || '—';
+    badge.style.color = retColor;
+    badge.style.background = retColor === '#3fb950' ? 'rgba(63,185,80,0.14)' : retColor === '#f85149' ? 'rgba(248,81,73,0.14)' : 'rgba(210,153,34,0.14)';
+  }
+  // Challenge bar (solo si activo)
+  var ch = d.challenge;
+  var ftmoBlock = document.getElementById('ftmo-progress');
+  var phaseRow = ftmoBlock && ftmoBlock.querySelector('.ftmo-pr');
+  var phaseBg  = ftmoBlock && ftmoBlock.querySelector('.ftmo-bg');
+  var phaseAm  = ftmoBlock && ftmoBlock.querySelector('.ftmo-am');
+  if (ch && ch.active) {
+    if (phaseRow) phaseRow.style.display = '';
+    if (phaseBg)  phaseBg.style.display  = '';
+    if (phaseAm)  phaseAm.style.display  = '';
+    _set('fp-falta', ch.falta);
+    _set('fp-ganado', ch.ganancia + ' ganados');
+    var bar = document.getElementById('fp-bar');
+    if (bar) { bar.style.width = ch.barraFill + '%'; bar.style.background = ch.color || '#58a6ff'; }
+  } else {
+    if (phaseRow) phaseRow.style.display = 'none';
+    if (phaseBg)  phaseBg.style.display  = 'none';
+    if (phaseAm)  phaseAm.style.display  = 'none';
+  }
 }
 
 // Init
