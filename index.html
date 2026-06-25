@@ -440,7 +440,7 @@ tbody td{padding:7px 14px;color:rgba(230,237,243,0.65);}
   </div>
   <div class="kpi4">
     <div class="kpi"><div class="kpi-lbl">Falta para Phase 1</div><div class="kpi-val" id="p3-falta">—</div><div class="kpi-sub">para completar objetivo</div></div>
-    <div class="kpi"><div class="kpi-lbl">Días plazo restantes</div><div class="kpi-val" id="p3-dias-rest">—</div><div class="kpi-sub">vence <span id="p3-limite">—</span></div></div>
+    <div class="kpi"><div class="kpi-lbl">Días transcurridos</div><div class="kpi-val" id="p3-dias-trans">—</div><div class="kpi-sub">desde inicio</div></div>
     <div class="kpi"><div class="kpi-lbl">Días operando</div><div class="kpi-val" id="p3-dias">—</div><div class="kpi-sub">con al menos 1 trade</div></div>
     <div class="kpi"><div class="kpi-lbl">Proyección target</div><div class="kpi-val" id="p3-proy" style="font-size:14px;">—</div><div class="kpi-sub">al ritmo actual</div></div>
   </div>
@@ -749,11 +749,8 @@ function renderChallenge() {
   _set('p3-lbl-target', 'target ' + ch.target);
   _set('p3-falta', ch.falta, ch.barraFill >= 100 ? '#3fb950' : '#e6edf3');
   _set('p3-dias', String(ch.diasOp));
-  var drColor = ch.diasRestantes <= 5 ? '#f85149' : ch.diasRestantes <= 10 ? '#e3b341' : '#e6edf3';
-  _set('p3-dias-rest', ch.diasRestantes + ' días', drColor);
-  _set('p3-limite', ch.fechaLimite);
-  var proyColor = ch.proyOk === true ? '#3fb950' : ch.proyOk === false ? '#f85149' : '#8b949e';
-  _set('p3-proy', ch.proyeccion, proyColor);
+  _set('p3-dias-trans', ch.diasTrans + ' días');
+  _set('p3-proy', ch.proyeccion, ch.proyeccion === 'Alcanzado' ? '#3fb950' : '#8b949e');
   _set('p3-start', ch.startDate);
   var bi = Math.max(0, Math.min(100, (ch.bufferI / 8) * 100));
   var bf = Math.max(0, Math.min(100, (ch.bufferF / 10) * 100));
