@@ -177,6 +177,32 @@ tbody td{padding:7px 14px;color:rgba(230,237,243,0.65);}
 .cfg-name{font-size:12px;color:rgba(230,237,243,0.6);}
 .cfg-desc{font-size:10px;color:rgba(230,237,243,0.28);margin-top:2px;}
 .cfg-val{font-size:12px;font-weight:500;color:#e6edf3;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.08);border-radius:5px;padding:3px 10px;font-family:var(--mono);}
+
+/* ── Roadmap / Timeline ── */
+.tm-wrap{position:relative;padding:4px 0 4px 28px;}
+.tm-wrap::before{content:'';position:absolute;left:7px;top:4px;bottom:4px;width:1.5px;background:rgba(255,255,255,0.07);}
+.tm-item{position:relative;margin-bottom:16px;}
+.tm-item:last-child{margin-bottom:0;}
+.tm-dot{position:absolute;left:-24px;top:3px;width:11px;height:11px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.15);background:#0d1117;z-index:1;}
+.tm-dot.done{background:#3fb950;border-color:#3fb950;}
+.tm-dot.current{background:#58a6ff;border-color:#58a6ff;box-shadow:0 0 0 3px rgba(88,166,255,0.18);}
+.tm-dot.future{background:#0d1117;border-color:rgba(255,255,255,0.2);}
+.tm-dot.key{background:#d29922;border-color:#d29922;width:13px;height:13px;left:-25px;top:2px;}
+.tm-date{font-size:10px;color:rgba(230,237,243,0.3);font-family:var(--mono);margin-bottom:2px;text-transform:uppercase;letter-spacing:.05em;}
+.tm-title{font-size:12.5px;font-weight:500;color:#e6edf3;margin-bottom:2px;}
+.tm-desc{font-size:11px;color:rgba(230,237,243,0.42);line-height:1.5;}
+.tm-chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px;}
+.tm-chip{font-size:9.5px;padding:2px 7px;border-radius:4px;}
+.chip-g{background:rgba(63,185,80,0.12);color:#3fb950;}
+.chip-b{background:rgba(88,166,255,0.12);color:#79c0ff;}
+.chip-y{background:rgba(210,153,34,0.12);color:#d29922;}
+.chip-p{background:rgba(163,113,247,0.12);color:#a371f7;}
+.proj-table{width:100%;font-size:11px;border-collapse:collapse;}
+.proj-table th{font-size:9.5px;color:rgba(230,237,243,0.28);padding:5px 10px;text-align:left;text-transform:uppercase;letter-spacing:.06em;border-bottom:0.5px solid rgba(255,255,255,0.05);}
+.proj-table td{padding:6px 10px;border-bottom:0.5px solid rgba(255,255,255,0.04);color:rgba(230,237,243,0.6);font-family:var(--mono);font-size:10.5px;}
+.proj-table tr:last-child td{border-bottom:none;}
+.proj-table tr.hl td{background:rgba(88,166,255,0.04);}
+.proj-table tr.hl-y td{background:rgba(210,153,34,0.04);}
 </style>
 </head>
 <body>
@@ -227,6 +253,11 @@ tbody td{padding:7px 14px;color:rgba(230,237,243,0.65);}
     <div class="ndiv"></div>
     <div class="ni" id="nav-4" onclick="goPage(4)">
       <i class="ti ti-adjustments-horizontal"></i><span class="ni-label">Configuración</span>
+    </div>
+    <div class="ndiv"></div>
+    <div class="sec-label">Proyecto</div>
+    <div class="ni" id="nav-5" onclick="goPage(5)">
+      <i class="ti ti-rocket"></i><span class="ni-label">Roadmap</span>
     </div>
   </div>
 
@@ -522,6 +553,204 @@ tbody td{padding:7px 14px;color:rgba(230,237,243,0.65);}
   </div>
 </div>
 
+<!-- PAGE 5: Roadmap -->
+<div class="page" id="page-5">
+  <div>
+    <div class="page-title">Roadmap — Plan de Escalabilidad</div>
+    <div class="page-sub">Camino a 6 cuentas $100k fondeadas · autofinanciado desde $10k · sin inversión adicional</div>
+  </div>
+
+  <div style="background:rgba(63,185,80,0.06);border:0.5px solid rgba(63,185,80,0.2);border-radius:8px;padding:11px 15px;display:flex;align-items:center;gap:10px;">
+    <i class="ti ti-shield-check" style="color:#3fb950;font-size:16px;flex-shrink:0;"></i>
+    <div>
+      <div style="font-size:12px;font-weight:500;color:#3fb950;">Inversión de bolsillo: $0</div>
+      <div style="font-size:10.5px;color:rgba(230,237,243,0.4);margin-top:1px;">VPS y challenges $100k cubiertos por los ingresos del bot. Fee €89 del $10k devuelto en el 1° payout de octubre.</div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start;">
+
+    <!-- Timeline -->
+    <div class="chart-card">
+      <div class="chart-ttl"><i class="ti ti-timeline" style="color:#58a6ff;"></i>Timeline de hitos</div>
+      <div class="tm-wrap">
+
+        <div class="tm-item">
+          <div class="tm-dot done"></div>
+          <div class="tm-date">Jun 2026</div>
+          <div class="tm-title">Bot activo en FTMO Phase 1</div>
+          <div class="tm-desc">$10k challenge arrancó. EA EMA Cross v2.0 corriendo en PC local. +$84 acumulados.</div>
+          <div class="tm-chips"><span class="tm-chip chip-g">completado</span></div>
+        </div>
+
+        <div class="tm-item">
+          <div class="tm-dot current"></div>
+          <div class="tm-date">Jul – Ago 2026</div>
+          <div class="tm-title">Phase 1 completa (+10%)</div>
+          <div class="tm-desc">Meta: $11.000. Bot en PC (demo — riesgo real bajo). Estimado ~7 semanas desde Jul 1.</div>
+          <div class="tm-chips"><span class="tm-chip chip-b">en curso</span></div>
+        </div>
+
+        <div class="tm-item">
+          <div class="tm-dot future"></div>
+          <div class="tm-date">Ago – Sep 2026</div>
+          <div class="tm-title">Phase 2 completa (+5%)</div>
+          <div class="tm-desc">Meta: $10.500 desde base Phase 2. ~4 semanas adicionales. Bot sigue en PC sin costo.</div>
+        </div>
+
+        <div class="tm-item">
+          <div class="tm-dot key"></div>
+          <div class="tm-date">Sep 2026</div>
+          <div class="tm-title">FUNDED $10k — migración a VPS</div>
+          <div class="tm-desc">Cuenta fondeada con capital real. Se migra el bot al VPS para uptime 24/7. VPS se paga con el 1° payout.</div>
+          <div class="tm-chips"><span class="tm-chip chip-y">hito clave</span></div>
+        </div>
+
+        <div class="tm-item">
+          <div class="tm-dot future"></div>
+          <div class="tm-date">Oct 2026</div>
+          <div class="tm-title">1° payout → compra Challenge $100k #1</div>
+          <div class="tm-desc">Payout: ~$512 ($416 ganancias + €89 fee refund). VPS: −$35. Challenge: −$475. Saldo: +$2.</div>
+          <div class="tm-chips"><span class="tm-chip chip-b">$0 de bolsillo</span></div>
+        </div>
+
+        <div class="tm-item">
+          <div class="tm-dot future"></div>
+          <div class="tm-date">Nov – Dic 2026</div>
+          <div class="tm-title">$100k Challenge #1: Phase 1 + Phase 2</div>
+          <div class="tm-desc">~11 semanas. $10k funded sigue generando $416/mes cubriendo el VPS.</div>
+        </div>
+
+        <div class="tm-item">
+          <div class="tm-dot key"></div>
+          <div class="tm-date">Ene 2027</div>
+          <div class="tm-title">$100k #1 FUNDED — primer retiro grande</div>
+          <div class="tm-desc">1° payout: ~$4.160/mes. Total con $10k: $4.576/mes. Comprar challenges #2 y #3 inmediatamente ($950).</div>
+          <div class="tm-chips"><span class="tm-chip chip-y">hito clave</span><span class="tm-chip chip-g">~$4.576/mes</span></div>
+        </div>
+
+        <div class="tm-item">
+          <div class="tm-dot future"></div>
+          <div class="tm-date">Ene – Mar 2027</div>
+          <div class="tm-title">$100k Challenges #2 y #3 en paralelo</div>
+          <div class="tm-desc">Pasan simultáneamente. Ingresos: $4.576/mes. VPS ampliado: ~$45/mes. Todo cubierto.</div>
+        </div>
+
+        <div class="tm-item">
+          <div class="tm-dot key"></div>
+          <div class="tm-date">Abr 2027</div>
+          <div class="tm-title">$100k #2 y #3 FUNDED — 3 cuentas activas</div>
+          <div class="tm-desc">Ingresos combinados: ~$12.896/mes. Comprar challenges #4, #5, #6 ($1.425 total).</div>
+          <div class="tm-chips"><span class="tm-chip chip-y">hito clave</span><span class="tm-chip chip-g">~$12.9k/mes</span></div>
+        </div>
+
+        <div class="tm-item">
+          <div class="tm-dot future"></div>
+          <div class="tm-date">Abr – Jun 2027</div>
+          <div class="tm-title">$100k Challenges #4, #5 y #6</div>
+          <div class="tm-desc">Tres cuentas pasando phases en paralelo. Los ingresos cubren todo sin aportes externos.</div>
+        </div>
+
+        <div class="tm-item">
+          <div class="tm-dot key"></div>
+          <div class="tm-date">Jul 2027</div>
+          <div class="tm-title">OBJETIVO FINAL — 6 cuentas $100k fondeadas</div>
+          <div class="tm-desc">Ingreso mensual neto: $25.376 (backtest) / $12.800 (conservador). VPS: ~$80/mes.</div>
+          <div class="tm-chips"><span class="tm-chip chip-p">objetivo final</span><span class="tm-chip chip-g">$12k – $25k/mes</span></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Panel derecho -->
+    <div style="display:flex;flex-direction:column;gap:12px;">
+
+      <!-- Proyección de ingresos -->
+      <div class="chart-card">
+        <div class="chart-ttl"><i class="ti ti-currency-dollar" style="color:#3fb950;"></i>Proyección de ingresos mensuales</div>
+        <table class="proj-table">
+          <thead>
+            <tr><th>Mes</th><th>Evento</th><th>Neto/mes</th><th>Acumulado</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Sep 26</td><td style="color:rgba(230,237,243,0.4);">Funded $10k</td><td style="color:#8b949e;">—</td><td style="color:#8b949e;">$0</td></tr>
+            <tr class="hl"><td>Oct 26</td><td style="color:rgba(230,237,243,0.4);">Payout + fee refund</td><td style="color:#3fb950;">+$512</td><td style="color:#3fb950;">+$512</td></tr>
+            <tr><td>Nov 26</td><td style="color:rgba(230,237,243,0.4);">$10k mes 2</td><td style="color:#3fb950;">+$416</td><td style="color:#3fb950;">+$928</td></tr>
+            <tr><td>Dic 26</td><td style="color:rgba(230,237,243,0.4);">$10k mes 3</td><td style="color:#3fb950;">+$416</td><td style="color:#3fb950;">+$1.344</td></tr>
+            <tr class="hl-y"><td>Ene 27</td><td style="color:rgba(230,237,243,0.4);">+$100k #1 funded</td><td style="color:#3fb950;">+$4.576</td><td style="color:#3fb950;">+$5.920</td></tr>
+            <tr><td>Feb 27</td><td style="color:rgba(230,237,243,0.4);">$10k + $100k #1</td><td style="color:#3fb950;">+$4.576</td><td style="color:#3fb950;">+$10.496</td></tr>
+            <tr><td>Mar 27</td><td style="color:rgba(230,237,243,0.4);">$10k + $100k #1</td><td style="color:#3fb950;">+$4.576</td><td style="color:#3fb950;">+$15.072</td></tr>
+            <tr class="hl-y"><td>Abr 27</td><td style="color:rgba(230,237,243,0.4);">+$100k #2 y #3</td><td style="color:#3fb950;">+$12.896</td><td style="color:#3fb950;">+$27.968</td></tr>
+            <tr><td>May 27</td><td style="color:rgba(230,237,243,0.4);">3 cuentas $100k</td><td style="color:#3fb950;">+$12.896</td><td style="color:#8b949e;">—</td></tr>
+            <tr class="hl"><td>Jul 27</td><td style="color:rgba(230,237,243,0.4);">6 cuentas $100k</td><td style="color:#58a6ff;font-weight:500;">+$25.376</td><td style="color:#58a6ff;">objetivo</td></tr>
+          </tbody>
+        </table>
+        <div style="font-size:9px;color:rgba(230,237,243,0.2);margin-top:8px;padding-top:7px;border-top:0.5px solid rgba(255,255,255,0.05);">
+          Basado en backtest 5.2%/mes × 80% payout FTMO. Conservador (~50%): $12.8k/mes en Jul 2027.
+        </div>
+      </div>
+
+      <!-- VPS costs -->
+      <div class="chart-card">
+        <div class="chart-ttl"><i class="ti ti-server" style="color:#d29922;"></i>Costo VPS por etapa</div>
+        <div style="display:flex;flex-direction:column;gap:9px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div>
+              <div style="font-size:12px;color:rgba(230,237,243,0.55);">Jul – Sep 2026</div>
+              <div style="font-size:10px;color:rgba(230,237,243,0.25);">PC local — bot en demo</div>
+            </div>
+            <span style="font-family:var(--mono);font-weight:500;font-size:13px;color:#3fb950;">$0/mes</span>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div>
+              <div style="font-size:12px;color:rgba(230,237,243,0.55);">Oct – Dic 2026</div>
+              <div style="font-size:10px;color:rgba(230,237,243,0.25);">2 terminales MT5</div>
+            </div>
+            <span style="font-family:var(--mono);font-weight:500;font-size:13px;color:#d29922;">$35/mes</span>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div>
+              <div style="font-size:12px;color:rgba(230,237,243,0.55);">Ene – Mar 2027</div>
+              <div style="font-size:10px;color:rgba(230,237,243,0.25);">4-5 terminales MT5</div>
+            </div>
+            <span style="font-family:var(--mono);font-weight:500;font-size:13px;color:#d29922;">$45/mes</span>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div>
+              <div style="font-size:12px;color:rgba(230,237,243,0.55);">Abr – Jun 2027</div>
+              <div style="font-size:10px;color:rgba(230,237,243,0.25);">7-8 terminales (1 VPS)</div>
+            </div>
+            <span style="font-family:var(--mono);font-weight:500;font-size:13px;color:#d29922;">$60/mes</span>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div>
+              <div style="font-size:12px;color:rgba(230,237,243,0.55);">Jul 2027+</div>
+              <div style="font-size:10px;color:rgba(230,237,243,0.25);">12 terminales (2 VPS)</div>
+            </div>
+            <span style="font-family:var(--mono);font-weight:500;font-size:13px;color:#d29922;">$80/mes</span>
+          </div>
+        </div>
+        <div style="margin-top:10px;padding-top:8px;border-top:0.5px solid rgba(255,255,255,0.05);font-size:10px;color:rgba(230,237,243,0.25);">
+          Todo cubierto por los payouts mensuales. Sin desembolso propio.
+        </div>
+      </div>
+
+      <!-- Revisión mensual -->
+      <div class="chart-card">
+        <div class="chart-ttl"><i class="ti ti-flag" style="color:#a371f7;"></i>Revisión mensual — 1° viernes de cada mes</div>
+        <div style="display:flex;flex-direction:column;gap:7px;font-size:11px;color:rgba(230,237,243,0.45);">
+          <div style="display:flex;align-items:center;gap:8px;"><i class="ti ti-chart-bar" style="font-size:12px;color:rgba(230,237,243,0.2);"></i>WR del mes vs baseline 34.8%</div>
+          <div style="display:flex;align-items:center;gap:8px;"><i class="ti ti-shield" style="font-size:12px;color:rgba(230,237,243,0.2);"></i>DD máximo del mes (límite 8%)</div>
+          <div style="display:flex;align-items:center;gap:8px;"><i class="ti ti-calendar-check" style="font-size:12px;color:rgba(230,237,243,0.2);"></i>Avance en la fase actual del plan</div>
+          <div style="display:flex;align-items:center;gap:8px;"><i class="ti ti-arrows-right" style="font-size:12px;color:rgba(230,237,243,0.2);"></i>Decisión: avanzar al siguiente paso o esperar</div>
+        </div>
+        <div style="margin-top:9px;padding-top:8px;border-top:0.5px solid rgba(255,255,255,0.05);font-size:10px;color:rgba(230,237,243,0.2);">Gate de salida Sep 30 2026 — 30+ trades vivos, WR ≥ 25%, 0 meses negativos.</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 </main>
 </div>
 
@@ -539,7 +768,7 @@ function gd() {
 
 function goPage(n) {
   CG = n;
-  for (var i = 1; i <= 4; i++) {
+  for (var i = 1; i <= 5; i++) {
     document.getElementById('page-'+i).className = 'page' + (i===n?' active':'');
     var nav = document.getElementById('nav-'+i);
     if (nav) nav.className = 'ni' + (i===n?' active':'');
